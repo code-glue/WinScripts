@@ -1,9 +1,11 @@
 @echo off
+
+:: {0}
     
-setlocal EnableDelayedExpansion
+SetLocal EnableDelayedExpansion
 
 set FileName=%~n0
-set ExePath=%~f1
+set FilePath=%~f1
 set ExeDir=%~dp1
 set Alias=%~n2
 
@@ -17,7 +19,7 @@ if errorlevel 1 exit /b
 goto RegAdd
     
 :CheckPath
-if exist "%ExePath%" (2>nul pushd "%ExePath%" && (popd&set "FileType=FOLDER") || set "FileType=FILE" ) else set "FileType=INVALID"
+if exist "%FilePath%" (2>nul pushd "%FilePath%" && (popd&set "FileType=FOLDER") || set "FileType=FILE" ) else set "FileType=INVALID"
 
 if %FileType% == INVALID (
     call :PrintInvalidPath
@@ -33,7 +35,7 @@ exit /b 0
 
 :PrintInvalidPath
 echo.
-echo Invalid path: "!ExePath!"
+echo Invalid path: "!FilePath!"
 exit /b
 
 :PrintHeader
@@ -48,23 +50,23 @@ call :PrintHeader
 
 :enterpath
 :: Prompt the user for the path
-set /p ExePath=Enter path to exe file [Ctrl+C to exit]: %=%
-if errorlevel 1 set "ExePath=" & verify>nul
+set /p FilePath=Enter path to exe file [Ctrl+C to exit]: %=%
+if errorlevel 1 set "FilePath=" & verify>nul
 
-if [!ExePath!] == [] (
+if [!FilePath!] == [] (
     goto enterpath
 )
 
 :: Remove quotes
-set ExePath=%ExePath:"=%
+set FilePath=%FilePath:"=%
 
-if [!ExePath!] == [] (
+if [!FilePath!] == [] (
     goto enterpath
 )
 
 :: Expand variables
-for %%a in ("!ExePath!") do (
-    call set ExePath=%%~a
+for %%a in ("!FilePath!") do (
+    call set FilePath=%%~a
     call :CheckPath
     if errorlevel 1 exit /b
 )
@@ -76,7 +78,7 @@ if errorlevel 1 set "Alias=" & verify>nul
 goto RegAdd
 
 :RegAdd
-for %%a in ("%ExePath%") do (
+for %%a in ("%FilePath%") do (
     set ExeDir=%%~dpa
 )
 
@@ -85,39 +87,39 @@ if %ExeDir:~-1%==\ set ExeDir=%ExeDir:~0,-1%
 
 :: Default to filename if no alias is specified
 if "%Alias%" == "" (
-    for %%a in ("%ExePath%") do set Alias=%%~na
+    for %%a in ("%FilePath%") do set Alias=%%~na
 ) else (
     for %%a in ("%Alias%") do set Alias=%%~na
 )
 
 set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%Alias%.exe
 
-echo ExePath  = %ExePath%
+echo FilePath = %FilePath%
 echo ExeDir   = %ExeDir%
 echo Alias    = %Alias%
 echo RegKey   = %RegKey%
 
-reg add "%RegKey%" /f /ve /d "%ExePath%"
+reg add "%RegKey%" /f /ve /d "%FilePath%"
 reg add "%RegKey%" /f /v "Path" /d "%ExeDir%"
 
 exit /b
 
 :Usage
 call :PrintHeader
-echo.%FileName% [ExePath [Alias]]
+echo.%FileName% [Path [Alias]]
 echo.
-echo.  ExePath  Path to the executable file that will be run.
-echo.  Alias    Name that will be entered into the Run dialog window.
-echo.           If excluded, defaults to the executable file name.
+echo.  Path   Path to the program/file that will be run/opened.
+echo.  Alias  Name that will be entered into the Run dialog window.
+echo.         If excluded, defaults to the file's name.
 echo.
 echo.Examples:
 echo.
-echo.  %FileName%
-echo.    -^> Prompts for the executable file path and alias.
+echo.  C:\^>%FileName%
+echo.    Prompts for the file path and alias.
 echo.
-echo.  %FileName% "C:\Program Files (x86)\NotePad++\notepad++.exe"
+echo.  C:\^>%FileName% "C:\Program Files (x86)\NotePad++\notepad++.exe"
 echo.    Runs Notepad++ when "notepad++" or "notepad++.exe" is entered.
 echo.
-echo.  %FileName% "%%SystemRoot%%\system32\WindowsPowerShell\v1.0\PowerShell.exe" posh
-echo.    Runs PowerShell when "posh" or "posh.exe" is entered.
+echo.  C:\^>%FileName% "%%SystemRoot%%\system32\WindowsPowerShell\v1.0\PowerShell.exe" posh
+echo.    Runs Notepad++ when "npp" or "npp.exe" is entered.
 exit /b
