@@ -73,8 +73,8 @@ begin
 
 process
 {
-    try
-    {
+    #try
+    #{
         $ScriptDir, $OutputDir | foreach {
             $item = Get-Item -LiteralPath $_ -ErrorAction Stop
             if ($item -eq $null -or @($item).Count -ne 1 -or -not $item.PSIsContainer)
@@ -94,7 +94,7 @@ process
         }
 
         Get-ChildItem $ScriptDir *.bat | foreach {
-            $contents = ([System.IO.File]::ReadAllText($_.FullName) -replace '::\s*{', '{') -f $licenseBat
+            $contents = [System.IO.File]::ReadAllText($_.FullName) -replace '::\s*%License%', $licenseBat
             writeScriptFile $_.Name $contents ascii
         }
 
@@ -109,9 +109,9 @@ process
             Write-Host "Creating zip file $zipPath"
             [System.IO.Compression.ZipFile]::CreateFromDirectory($targetPath, $zipPath, 'Optimal', $true)
         }
-    }
-    catch
-    {
-        Write-Error -ErrorRecord $_
-    }
+    #}
+    #catch
+    #{
+    #    Write-Error -ErrorRecord $_
+    #}
 }

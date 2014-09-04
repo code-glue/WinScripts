@@ -1,6 +1,6 @@
 @echo off
 
-:: {0}
+:: %License%
     
 SetLocal EnableDelayedExpansion
 
