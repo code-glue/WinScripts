@@ -24,3 +24,24 @@ Examples:
   
       C:\>AppPathAdd "C:\Program Files (x86)\NotePad++\notepad++.exe" npp
         Runs Notepad++ when "npp" or "npp.exe" is entered.
+
+___
+## AppPathRemove
+Prevents a program/file from being opened from the "Run" dialog window using its alias.
+  
+**Usage:**
+  
+AppPathRemove Alias[.exe]
+  
+      Alias    The name of the alias to remove, optionally followed by ".exe".
+  
+Examples:
+  
+      C:\>AppPathRemove
+        Prompts for the alias.
+
+      C:\>AppPathRemove "npp"
+        Removes the "npp.exe" alias from the registry.
+  
+      C:\>AppPathRemove "npp.exe"
+        Removes the "npp.exe" alias from the registry.
