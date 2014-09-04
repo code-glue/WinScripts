@@ -1,6 +1,32 @@
- [CmdletBinding()]
+<#
+.SYNOPSIS
+   Adds template parameters to specified script files and outputs them to the specified path.
+
+.DESCRIPTION
+   Adds template parameters to specified script files and outputs them to the specified path.
+   Currently, it only adds the license to each file, but it could be used to generate OS-specific scripts.
+
+.PARAMETER ScriptDir
+   Path to a directory containing script files.
+   
+.PARAMETER OutputDir
+   The directory where the modified script files will be saved.
+
+.PARAMETER Zip
+    Specifies whether or not to zip the contents of the output directory.
+
+#>
+[CmdletBinding()]
 param
 (
+    [Parameter(Mandatory=$true, Position=0)]
+    [String]
+    $ScriptDir,
+
+    [Parameter(Mandatory=$true, Position=1)]
+    [String]
+    $OutputDir,
+
     [switch]
     $Zip = $true
 )
@@ -10,11 +36,10 @@ begin
     Set-StrictMode -Version Latest
 
  
-    #region Editable variables
+    #region Contants
     
     $projectName       = 'WinScripts'
     $version           = '1.0.1'
-    $outputDirName     = "dist"
     $authorName        = 'Benjamin Lemmond'
     $authorEmail       = 'benlemmond@codeglue.org'
     $companyName       = 'Code Glue, LLC'
@@ -28,10 +53,6 @@ begin
     #region Internal variables
 
     $here        = $PSCmdlet.MyInvocation.MyCommand.Definition | Split-Path
-    $scriptDir   = Resolve-Path "$here\.."
-    $outputPath  = Join-Path $scriptDir $outputDirName
-    $targetPath  = Join-Path $outputPath "$projectName.v$version"
-    $zipPath     = "$targetPath.zip"
     $copyright   = "Copyright (c) $copyrightYear $companyName ($companyUrl)"
     $newLine     = [Environment]::NewLine
     $license     = [System.IO.File]::ReadAllText("$here\license.txt") -f $copyright
@@ -39,7 +60,6 @@ begin
     $licenseBat  = $(($license -split $newLine | foreach { ($_, ":: $_")[[bool]$_] }) -join $newLine)
 
     #endregion
-
 
     
     function writeScriptFile($fileName, $content, [ValidateSet('utf8', 'ascii')]$encoding)
@@ -53,27 +73,45 @@ begin
 
 process
 {
-    Remove-Item "$targetPath" -Recurse -Force -ErrorAction SilentlyContinue
-
-    if ($Zip)
+    try
     {
-        Remove-Item $zipPath -Force -ErrorAction SilentlyContinue
-    }
-
-    Get-ChildItem $scriptDir *.bat | foreach {
-        $contents = [System.IO.File]::ReadAllText($_.FullName) -f $licenseBat
-        writeScriptFile $_.Name $contents ascii
-    }
-
-    
-    if ($Zip)
-    {
-        if (-not ([System.Management.Automation.PSTypeName]'System.IO.Compression.ZipFile').Type)
-        {
-            Add-Type -AssemblyName System.IO.Compression.FileSystem
+        $ScriptDir, $OutputDir | foreach {
+            $item = Get-Item -LiteralPath $_ -ErrorAction Stop
+            if ($item -eq $null -or @($item).Count -ne 1 -or -not $item.PSIsContainer)
+            {
+                throw [System.IO.FileNotFoundException]"'$_' is not a directory"
+            }
         }
     
-        Write-Host "Creating zip file $zipPath"
-        [System.IO.Compression.ZipFile]::CreateFromDirectory($targetPath, $zipPath, 'Optimal', $true)
+        $targetPath  = Resolve-Path (Join-Path $OutputDir "$projectName.v$version")
+        $zipPath     = "$targetPath.zip"
+
+        Remove-Item "$targetPath" -Recurse -Force -ErrorAction SilentlyContinue
+        
+        if ($Zip)
+        {
+            Remove-Item $zipPath -Force -ErrorAction SilentlyContinue
+        }
+
+        Get-ChildItem $ScriptDir *.bat | foreach {
+            $contents = ([System.IO.File]::ReadAllText($_.FullName) -replace '::\s*{', '{') -f $licenseBat
+            writeScriptFile $_.Name $contents ascii
+        }
+
+    
+        if ($Zip)
+        {
+            if (-not ([System.Management.Automation.PSTypeName]'System.IO.Compression.ZipFile').Type)
+            {
+                Add-Type -AssemblyName System.IO.Compression.FileSystem
+            }
+    
+            Write-Host "Creating zip file $zipPath"
+            [System.IO.Compression.ZipFile]::CreateFromDirectory($targetPath, $zipPath, 'Optimal', $true)
+        }
     }
-}  
+    catch
+    {
+        Write-Error -ErrorRecord $_
+    }
+}
