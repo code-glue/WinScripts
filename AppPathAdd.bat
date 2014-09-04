@@ -120,6 +120,6 @@ echo.
 echo.  C:\^>%FileName% "C:\Program Files (x86)\NotePad++\notepad++.exe"
 echo.    Runs Notepad++ when "notepad++" or "notepad++.exe" is entered.
 echo.
-echo.  C:\^>%FileName% "%%SystemRoot%%\system32\WindowsPowerShell\v1.0\PowerShell.exe" posh
+echo.  C:\^>%FileName% "C:\Program Files (x86)\NotePad++\notepad++.exe" npp
 echo.    Runs Notepad++ when "npp" or "npp.exe" is entered.
 exit /b
