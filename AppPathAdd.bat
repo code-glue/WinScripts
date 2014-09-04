@@ -9,7 +9,7 @@ set FilePath=%~f1
 set ExeDir=%~dp1
 set Alias=%~n2
 
-if [%1] == [] goto ui
+if [%1] == [] goto UI
 if "%~1" == "/?" goto Usage
 if not [%3] == [] goto Usage
 
@@ -40,28 +40,28 @@ exit /b
 
 :PrintHeader
 echo.
-echo Makes programs or files accessible from the Start-^>Run dialog window.
+echo Allows a program/file to be opened from the "Run" dialog window using an alias.
 echo Author: Ben Lemmond benlemmond@codeglue.org
 echo.
 exit /b
 
-:ui
+:UI
 call :PrintHeader
 
-:enterpath
+:EnterPath
 :: Prompt the user for the path
 set /p FilePath=Enter path to exe file [Ctrl+C to exit]: %=%
 if errorlevel 1 set "FilePath=" & verify>nul
 
 if [!FilePath!] == [] (
-    goto enterpath
+    goto EnterPath
 )
 
 :: Remove quotes
 set FilePath=%FilePath:"=%
 
 if [!FilePath!] == [] (
-    goto enterpath
+    goto EnterPath
 )
 
 :: Expand variables
@@ -94,13 +94,13 @@ if "%Alias%" == "" (
 
 set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%Alias%.exe
 
+echo Alias    = %Alias%
 echo FilePath = %FilePath%
 echo ExeDir   = %ExeDir%
-echo Alias    = %Alias%
 echo RegKey   = %RegKey%
 
-reg add "%RegKey%" /f /ve /d "%FilePath%"
-reg add "%RegKey%" /f /v "Path" /d "%ExeDir%"
+reg add "%RegKey%" /f /ve /d "%FilePath%" >NUL
+reg add "%RegKey%" /f /v "Path" /d "%ExeDir%" >NUL
 
 exit /b
 
