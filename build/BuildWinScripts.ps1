@@ -75,15 +75,26 @@ process
 {
     #try
     #{
-        $ScriptDir, $OutputDir | foreach {
-            $item = Get-Item -LiteralPath $_ -ErrorAction Stop
+        $outDir =
+            if (Test-Path $OutputDir)
+            {
+                Resolve-Path $OutputDir
+            }
+            else
+            {
+                New-Item -Type Directory $OutputDir -ErrorAction Stop
+            }
+
+        $ScriptDir, $outDir | foreach {
+            $item = Get-Item -LiteralPath $_ -ErrorAction SilentlyContinue
+
             if ($item -eq $null -or @($item).Count -ne 1 -or -not $item.PSIsContainer)
             {
                 throw [System.IO.FileNotFoundException]"'$_' is not a directory"
             }
         }
     
-        $targetPath  = Resolve-Path (Join-Path $OutputDir "$projectName.v$version")
+        $targetPath  = Join-Path $outDir "$projectName.v$version"
         $zipPath     = "$targetPath.zip"
 
         Remove-Item "$targetPath" -Recurse -Force -ErrorAction SilentlyContinue
