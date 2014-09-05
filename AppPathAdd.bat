@@ -8,13 +8,14 @@ set FileName=%~n0
 set FilePath=%~f1
 set ExeDir=%~dp1
 set Alias=%~n2
+set UI=0
 
 if [%1] == [] goto UI
 if "%~1" == "/?" goto Usage
 if not [%3] == [] goto Usage
 
 call :CheckPath
-if errorlevel 1 exit /b
+if %ErrorLevel% equ 1 exit /b 1
 
 goto RegAdd
     
@@ -36,21 +37,22 @@ exit /b 0
 :PrintInvalidPath
 echo.
 echo Invalid path: "!FilePath!" 1>&2
-exit /b
+exit /b 0
 
 :PrintHeader
 echo.
 echo Allows a program/file to be opened from the "Run" dialog window using an alias.
 echo.
-exit /b
+exit /b 0
 
 :UI
+set UI=1
 call :PrintHeader
 
 :EnterPath
 :: Prompt the user for the path
 set /p FilePath=Enter path to exe file [Ctrl+C to exit]: %=%
-if errorlevel 1 set "FilePath=" & verify>nul
+if %ErrorLevel% neq 0 set "FilePath=" & verify>nul & goto EnterPath
 
 if [!FilePath!] == [] (
     goto EnterPath
@@ -67,12 +69,12 @@ if [!FilePath!] == [] (
 for %%a in ("!FilePath!") do (
     call set FilePath=%%~a
     call :CheckPath
-    if errorlevel 1 exit /b
+    if %ErrorLevel% neq 0 exit /b 1
 )
 
 :: Prompt the user for the alias
 set /p Alias=Enter Alias. Press Enter to use the file name [Ctrl+C to exit]: 
-if errorlevel 1 set "Alias=" & verify>nul
+if %ErrorLevel% neq 0 set "Alias=" & verify>nul
 
 goto RegAdd
 
@@ -100,9 +102,10 @@ REM echo RegKey   = %RegKey%
 
 reg add "%RegKey%" /f /ve /d "%FilePath%" >nul
 reg add "%RegKey%" /f /v "Path" /d "%ExeDir%" >nul
-if ErrorLevel 0 echo Alias added: "%Alias%" -^> "%FilePath%"
 
-exit /b
+if %ErrorLevel% equ 0 echo Alias added: "%Alias%" -^> "%FilePath%" && exit /b 0
+if %UI% equ 0 call PauseOnError.bat
+exit /b 1
 
 :Usage
 call :PrintHeader
@@ -122,4 +125,4 @@ echo.    Runs Notepad++ when "notepad++" or "notepad++.exe" is entered.
 echo.
 echo.  C:\^>%FileName% "C:\Program Files (x86)\NotePad++\notepad++.exe" npp
 echo.    Runs Notepad++ when "npp" or "npp.exe" is entered.
-exit /b
+exit /b 1

@@ -6,16 +6,16 @@ SetLocal EnableDelayedExpansion
 
 set ExeName=%~1
 set FileName=%~n0
+set UI=0
 
 if [%1] == [] goto UI
 if "%~1" == "/?" goto Usage
 if not [%2] == [] goto Usage
 
-goto CheckPath
+goto RegQuery
 
 
 :GetExeName
-if [%~n1] == [] exit /b 1
 set Extension=%~x1
 if "%~x1" == "" set Extension=.exe
 set ExeName=%~n1!Extension!
@@ -25,46 +25,45 @@ exit /b 0
 :PrintHeader
 echo.
 echo Prevents a program/file from being opened from the "Run" dialog window using its alias.
-exit /b
+exit /b 0
 
 
 :UI
+set UI=1
 call :PrintHeader
+echo.
 
 
 :EnterAlias
-echo.
-set /p ExeName=Enter alias name to remove [Ctrl+C to exit]:
-if ErrorLevel 1 set "ExeName=" & verify>nul
+set /p ExeName="Enter alias name to remove [Ctrl^+C to exit]: " %=%
+if %ErrorLevel% neq 0 set "ExeName=" & verify >nul & goto EnterAlias
 
 :: Remove spaces
 set ExeName=%ExeName: =%
 
-if "%ExeName%" == "" goto EnterAlias
+if "%ExeName%" == "" goto :EnterAlias
 if "%ExeName%" == "." goto EnterAlias
 if "%ExeName%" == ".." goto EnterAlias
 
-
-:CheckPath
+:RegQuery
 call :GetExeName "%ExeName%"
 set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%ExeName%
-
 reg query "%RegKey%" >nul
-REM echo ErrorLevel=%ErrorLevel%
-REM if not ErrorLevel 0 (
-if not "%ErrorLevel%" == "0" (
-    echo %RegKey% 1>&2
-    exit /b
-)
+if %ErrorLevel% neq 0 goto ExitError
 
 
 :RegDelete
-REM echo ExeName = '%ExeName%'
-REM echo RegKey  = '%RegKey%'
-
 reg delete "%RegKey%" /f >nul
-if ErrorLevel 0 echo Alias removed
-exit /b
+if %ErrorLevel% neq 0 goto ExitError
+echo Alias removed
+exit /b 0
+
+
+:ExitError
+echo %RegKey% 1>&2
+echo.
+if %UI% equ 0 call PauseOnError.bat
+exit /b 1
 
 
 :Usage
