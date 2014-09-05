@@ -2,10 +2,9 @@
 
 :: %License%
 
-SetLocal 
 SetLocal EnableDelayedExpansion
 
-set ExeName=%~1 
+set ExeName=%~1
 set FileName=%~n0
 
 if [%1] == [] goto UI
