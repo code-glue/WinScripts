@@ -2,8 +2,10 @@
 
 :: %License%
 
+SetLocal 
 SetLocal EnableDelayedExpansion
 
+set ExeName=%~1 
 set FileName=%~n0
 
 if [%1] == [] goto UI
@@ -14,9 +16,9 @@ goto CheckPath
 
 
 :GetExeName
-if "%%~n1" == "" exit /b 1
+if [%~n1] == [] exit /b 1
 set Extension=%~x1
-if "!Extension!" == "" set Extension=.exe
+if "%~x1" == "" set Extension=.exe
 set ExeName=%~n1!Extension!
 exit /b 0
 
@@ -34,7 +36,7 @@ call :PrintHeader
 
 :EnterAlias
 echo.
-set /p ExeName=Enter exe file name [Ctrl+C to exit]: 
+set /p ExeName=Enter alias name [Ctrl+C to exit]: 
 if ErrorLevel 1 set "ExeName=" & verify>nul
 
 :: Remove spaces
@@ -46,13 +48,14 @@ if "%ExeName%" == ".." goto EnterAlias
 
 
 :CheckPath
-call :GetExeName %ExeName%
+call :GetExeName "%ExeName%"
 set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%ExeName%
 
-reg query "%RegKey%" >NUL 2>1
-if not ErrorLevel 0 {
-    echo.
-    echo Invalid key name: "%RegKey%"
+reg query "%RegKey%" >nul
+REM echo ErrorLevel=%ErrorLevel%
+REM if not ErrorLevel 0 (
+if not "%ErrorLevel%" == "0" (
+    echo %RegKey% 1>&2
     exit /b
 )
 
@@ -61,7 +64,8 @@ if not ErrorLevel 0 {
 REM echo ExeName = '%ExeName%'
 REM echo RegKey  = '%RegKey%'
 
-reg delete "%RegKey%" /f
+reg delete "%RegKey%" /f >nul
+if ErrorLevel 0 echo Alias removed
 exit /b
 
 echo.

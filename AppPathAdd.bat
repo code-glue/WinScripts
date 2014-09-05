@@ -94,13 +94,14 @@ if "%Alias%" == "" (
 
 set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%Alias%.exe
 
-echo Alias    = %Alias%
-echo FilePath = %FilePath%
-echo ExeDir   = %ExeDir%
-echo RegKey   = %RegKey%
+REM echo Alias    = %Alias%
+REM echo FilePath = %FilePath%
+REM echo ExeDir   = %ExeDir%
+REM echo RegKey   = %RegKey%
 
 reg add "%RegKey%" /f /ve /d "%FilePath%" >NUL
 reg add "%RegKey%" /f /v "Path" /d "%ExeDir%" >NUL
+if ErrorLevel 0 echo Alias added: "%Alias%" -^> "%FilePath%"
 
 exit /b
 
