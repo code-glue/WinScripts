@@ -28,20 +28,19 @@ if %FileType% == INVALID (
 
 if %FileType% == FOLDER (
     call :PrintInvalidPath
-    echo Path is a directory.
+    echo Path is a directory. 1>&2
     exit /b 1
 )
 exit /b 0
 
 :PrintInvalidPath
 echo.
-echo Invalid path: "!FilePath!"
+echo Invalid path: "!FilePath!" 1>&2
 exit /b
 
 :PrintHeader
 echo.
 echo Allows a program/file to be opened from the "Run" dialog window using an alias.
-echo Author: Ben Lemmond benlemmond@codeglue.org
 echo.
 exit /b
 
@@ -99,8 +98,8 @@ REM echo FilePath = %FilePath%
 REM echo ExeDir   = %ExeDir%
 REM echo RegKey   = %RegKey%
 
-reg add "%RegKey%" /f /ve /d "%FilePath%" >NUL
-reg add "%RegKey%" /f /v "Path" /d "%ExeDir%" >NUL
+reg add "%RegKey%" /f /ve /d "%FilePath%" >nul
+reg add "%RegKey%" /f /v "Path" /d "%ExeDir%" >nul
 if ErrorLevel 0 echo Alias added: "%Alias%" -^> "%FilePath%"
 
 exit /b

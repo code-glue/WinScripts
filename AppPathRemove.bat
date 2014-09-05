@@ -26,7 +26,6 @@ exit /b 0
 :PrintHeader
 echo.
 echo Prevents a program/file from being opened from the "Run" dialog window using its alias.
-echo Author: Ben Lemmond benlemmond@codeglue.org
 exit /b
 
 
@@ -36,7 +35,7 @@ call :PrintHeader
 
 :EnterAlias
 echo.
-set /p ExeName=Enter alias name [Ctrl+C to exit]: 
+set /p ExeName=Enter alias name to remove [Ctrl+C to exit]:
 if ErrorLevel 1 set "ExeName=" & verify>nul
 
 :: Remove spaces
@@ -68,18 +67,13 @@ reg delete "%RegKey%" /f >nul
 if ErrorLevel 0 echo Alias removed
 exit /b
 
-echo.
-echo Registry key not found: "%RegKey%"
-
-exit /b
-
 
 :Usage
 call :PrintHeader
 echo.
 echo.%FileName% Alias[.exe]
 echo.
-echo.  Alias  The name of the alias to remove, optionally followed by ".exe".
+echo.  Alias    The name of the alias to remove, optionally followed by ".exe".
 echo.
 echo.Examples:
 echo.
