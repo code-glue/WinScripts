@@ -4,6 +4,7 @@
 
 SetLocal EnableDelayedExpansion
 
+set Here=%~dp0
 set ExeName=%~1
 set FileName=%~n0
 set UI=0
@@ -62,7 +63,7 @@ exit /b 0
 :ExitError
 echo %RegKey% 1>&2
 echo.
-if %UI% equ 0 call PauseOnError.bat
+if %UI% equ 0 call "%Here%PauseOnError.bat"
 exit /b 1
 
 

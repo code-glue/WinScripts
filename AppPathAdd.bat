@@ -4,6 +4,7 @@
     
 SetLocal EnableDelayedExpansion
 
+set Here=%~dp0
 set FileName=%~n0
 set FilePath=%~f1
 set ExeDir=%~dp1
@@ -104,7 +105,7 @@ reg add "%RegKey%" /f /ve /d "%FilePath%" >nul
 reg add "%RegKey%" /f /v "Path" /d "%ExeDir%" >nul
 
 if %ErrorLevel% equ 0 echo Alias added: "%Alias%" -^> "%FilePath%" && exit /b 0
-if %UI% equ 0 call PauseOnError.bat
+if %UI% equ 0 call "%Here%PauseOnError.bat"
 exit /b 1
 
 :Usage

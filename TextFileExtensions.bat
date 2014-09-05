@@ -6,6 +6,7 @@ SetLocal EnableDelayedExpansion
 
 if not [%1] == [] goto Usage
 
+set Here=%~dp0
 set HasErrors=0
 
 set TextFileExtensions=( ^
@@ -298,7 +299,7 @@ for %%a in %TextFileExtensions% do (
 
 echo.
 if %HasErrors% equ 0 exit /b 0
-call PauseOnError.bat
+call "%Here%PauseOnError.bat"
 exit /b 1
 
 :Usage
