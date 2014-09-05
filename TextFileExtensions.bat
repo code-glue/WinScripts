@@ -4,11 +4,9 @@
 
 SetLocal EnableDelayedExpansion
 
-set FileName=%~n0
-set HasErrors=0
-
-if "%~1" == "/?" goto Usage
 if not [%1] == [] goto Usage
+
+set HasErrors=0
 
 set TextFileExtensions=( ^
 ada         ^
@@ -287,23 +285,24 @@ yml         ^
 )
 
 echo Adding a plain text persistent handler for the following extensions:
+echo.
 for %%a in %TextFileExtensions% do (
     echo | set /p= %%a 
     
     reg add "HKCR\.%%a" /v "PerceivedType" /d "text" /f >nul
-    if not "!ErrorLevel!" == "0" set HasErrors=1
+    if !ErrorLevel! neq 0 set HasErrors=1
 
     reg add "HKCR\.%%a\PersistentHandler" /ve /d "{5E941D80-BF96-11CD-B579-08002B30BFEB}" /f > nul
-    if not "!ErrorLevel!" == "0" set HasErrors=1
+    if !ErrorLevel! neq 0 set HasErrors=1
 )
 
 echo.
-if "!HasErrors!" == "0" exit /b 0
-pause
+if %HasErrors% equ 0 exit /b 0
+call PauseOnError.bat
 exit /b 1
 
 :Usage
 echo.
 echo Adds over 250 text file extensions, allowing files with these extensions to be indexed, searched, and easily opened in any text editor.
 echo.
-exit /b
+exit /b 1
