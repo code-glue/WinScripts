@@ -23,12 +23,6 @@ set ExeName=%~n1!Extension!
 exit /b 0
 
 
-:PrintHeader
-echo.
-echo Prevents a program/file from being opened from the "Run" dialog window using its alias.
-exit /b 0
-
-
 :UI
 set UI=1
 call :PrintHeader
@@ -67,6 +61,12 @@ if %UI% equ 0 call "%Here%PauseOnError.bat"
 exit /b 1
 
 
+:PrintHeader
+echo.
+echo Prevents a program/file from being opened from the "Run" dialog window using its alias.
+exit /b 0
+
+
 :Usage
 call :PrintHeader
 echo.
@@ -84,4 +84,4 @@ echo.    Removes the "npp.exe" alias from the registry.
 echo.
 echo.  C:\^>%FileName% "npp.exe"
 echo.    Removes the "npp.exe" alias from the registry.
-exit /b
+exit /b 1
