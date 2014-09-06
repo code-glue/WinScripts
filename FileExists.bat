@@ -5,6 +5,7 @@
 SetLocal
 
 set FileName=%~n0
+set Result=1
 
 if "%~1" == "/?" goto Usage
 if not [%2] == [] goto Usage
@@ -30,12 +31,12 @@ echo.    Sets %%ErrorLevel%% to 0. File exists.
 echo.
 echo.  C:\^>%FileName% "C:\Windows"
 echo.    Sets %%ErrorLevel%% to 1. Path exists but is a directory.
-@%COMSPEC% /C exit 1 >nul
+goto Exit
+
 
 :TestPath
-
-set Result=1
 if exist "%~f1" (2>nul pushd "%~f1" && (popd) || set Result=0)
 
-REM echo Result=%Result%
-@%COMSPEC% /C exit %Result% >nul
+
+:Exit
+@%ComSpec% /c exit %Result% >nul
