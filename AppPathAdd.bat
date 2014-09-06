@@ -10,6 +10,7 @@ set FileName=%~n0
 set FilePath=%~f1
 set ExeDir=%~dp1
 set Alias=%~n2
+set Result=1
 set UI=0
 
 if [%1] == [] goto UI
@@ -67,23 +68,17 @@ if "%Alias%" == "" (
 
 set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%Alias%.exe
 
-REM echo Alias    = %Alias%
-REM echo FilePath = %FilePath%
-REM echo ExeDir   = %ExeDir%
-REM echo RegKey   = %RegKey%
-
 reg add "%RegKey%" /f /ve /d "%FilePath%" >nul
 reg add "%RegKey%" /f /v "Path" /d "%ExeDir%" >nul
 
-if %ErrorLevel% equ 0 echo Alias added: "%Alias%" -^> "%FilePath%" && exit /b 0
-if %UI% equ 0 call "%PauseOnError%"
-exit /b 1
+if %ErrorLevel% equ 0 echo Alias added: "%Alias%" -^> "%FilePath%" & set Result=0
+goto Exit
 
 
 :PrintInvalidPath
 echo.
 echo File does not exist: "%FilePath%" 1>&2
-exit /b 1
+goto Exit
 
 
 :PrintHeader
@@ -111,4 +106,9 @@ echo.    Runs Notepad++ when "notepad++" or "notepad++.exe" is entered.
 echo.
 echo.  C:\^>%FileName% "C:\Program Files (x86)\NotePad++\notepad++.exe" npp
 echo.    Runs Notepad++ when "npp" or "npp.exe" is entered.
-exit /b 1
+
+:Exit
+if !Result! neq 0 (
+    if !UI! equ 0 call "%PauseOnError%"
+)
+@%ComSpec% /c exit !Result! >nul
