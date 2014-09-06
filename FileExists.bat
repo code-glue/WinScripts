@@ -15,7 +15,7 @@ goto TestPath
 :Usage
 echo.
 echo Determines whether the given path refers to an existing file.
-echo Sets the ErrorLevel variable to 0 if the file exists; otherwise, 1;
+echo Sets the ErrorLevel variable to 0 if the file exists; otherwise, 1.
 echo.
 echo.%FileName% Path
 echo.
