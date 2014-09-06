@@ -7,6 +7,7 @@ SetLocal
 set FileName=%~n0
 set Result=1
 
+if [%1] == [] goto Exit
 if "%~1" == "/?" goto Usage
 if not [%2] == [] goto Usage
 
