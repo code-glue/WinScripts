@@ -4,7 +4,8 @@
     
 SetLocal EnableDelayedExpansion
 
-set Here=%~dp0
+set PauseOnError=%~dp0PauseOnError.bat
+set FileExists=%~dp0FileExists.bat
 set FileName=%~n0
 set FilePath=%~f1
 set ExeDir=%~dp1
@@ -15,62 +16,31 @@ if [%1] == [] goto UI
 if "%~1" == "/?" goto Usage
 if not [%3] == [] goto Usage
 
-call :CheckPath
-if %ErrorLevel% equ 1 exit /b 1
-
+call "%FileExists%" "%FilePath%"
+if %ErrorLevel% neq 0 goto PrintInvalidPath
 goto RegAdd
-    
-:CheckPath
-if exist "%FilePath%" (2>nul pushd "%FilePath%" && (popd&set "FileType=FOLDER") || set "FileType=FILE" ) else set "FileType=INVALID"
 
-if %FileType% == INVALID (
-    call :PrintInvalidPath
-    exit /b 1
-)
-
-if %FileType% == FOLDER (
-    call :PrintInvalidPath
-    echo Path is a directory. 1>&2
-    exit /b 1
-)
-exit /b 0
-
-:PrintInvalidPath
-echo.
-echo Invalid path: "!FilePath!" 1>&2
-exit /b 0
-
-:PrintHeader
-echo.
-echo Allows a program/file to be opened from the "Run" dialog window using an alias.
-echo.
-exit /b 0
 
 :UI
 set UI=1
 call :PrintHeader
+
 
 :EnterPath
 :: Prompt the user for the path
 set /p FilePath=Enter path to exe file [Ctrl+C to exit]: %=%
 if %ErrorLevel% neq 0 set "FilePath=" & verify>nul & goto EnterPath
 
-if [!FilePath!] == [] (
-    goto EnterPath
-)
-
 :: Remove quotes
 set FilePath=%FilePath:"=%
 
-if [!FilePath!] == [] (
-    goto EnterPath
-)
+if [!FilePath!] == [] goto EnterPath
 
 :: Expand variables
 for %%a in ("!FilePath!") do (
-    call set FilePath=%%~a
-    call :CheckPath
-    if %ErrorLevel% neq 0 exit /b 1
+    call set FilePath=%%~fa
+    call "%FileExists%" "!FilePath!"
+    if !ErrorLevel! neq 0 goto PrintInvalidPath
 )
 
 :: Prompt the user for the alias
@@ -78,6 +48,7 @@ set /p Alias=Enter Alias. Press Enter to use the file name [Ctrl+C to exit]:
 if %ErrorLevel% neq 0 set "Alias=" & verify>nul
 
 goto RegAdd
+
 
 :RegAdd
 for %%a in ("%FilePath%") do (
@@ -105,8 +76,22 @@ reg add "%RegKey%" /f /ve /d "%FilePath%" >nul
 reg add "%RegKey%" /f /v "Path" /d "%ExeDir%" >nul
 
 if %ErrorLevel% equ 0 echo Alias added: "%Alias%" -^> "%FilePath%" && exit /b 0
-if %UI% equ 0 call "%Here%PauseOnError.bat"
+if %UI% equ 0 call "%PauseOnError%"
 exit /b 1
+
+
+:PrintInvalidPath
+echo.
+echo File does not exist: "%FilePath%" 1>&2
+exit /b 1
+
+
+:PrintHeader
+echo.
+echo Allows a program/file to be opened from the "Run" dialog window using an alias.
+echo.
+exit /b 0
+
 
 :Usage
 call :PrintHeader
