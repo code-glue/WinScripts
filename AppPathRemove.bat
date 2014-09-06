@@ -4,8 +4,10 @@
 
 SetLocal EnableDelayedExpansion
 
-set Here=%~dp0
-set ExeName=%~1
+set PauseOnError=%~dp0PauseOnError.bat
+set RegKeyExists=%~dp0RegKeyExists.bat
+set Result=1
+set Alias=%~1
 set FileName=%~n0
 set UI=0
 
@@ -13,13 +15,13 @@ if [%1] == [] goto UI
 if "%~1" == "/?" goto Usage
 if not [%2] == [] goto Usage
 
-goto RegQuery
+goto VerifyKey
 
 
-:GetExeName
+:GetAlias
 set Extension=%~x1
 if "%~x1" == "" set Extension=.exe
-set ExeName=%~n1!Extension!
+set Alias=%~n1!Extension!
 exit /b 0
 
 
@@ -30,46 +32,38 @@ echo.
 
 
 :EnterAlias
-set /p ExeName="Enter alias name to remove [Ctrl^+C to exit]: " %=%
-if %ErrorLevel% neq 0 set "ExeName=" & verify >nul & goto EnterAlias
+set /p Alias="Enter alias name to remove [Ctrl+C to exit]: " %=%
+if %ErrorLevel% neq 0 set "Alias=" & verify >nul & goto EnterAlias
 
 :: Remove spaces
-set ExeName=%ExeName: =%
+set Alias=%Alias: =%
 
-if "%ExeName%" == "" goto :EnterAlias
-if "%ExeName%" == "." goto EnterAlias
-if "%ExeName%" == ".." goto EnterAlias
+if "%Alias%" == "" goto EnterAlias
+if "%Alias%" == "." goto EnterAlias
+if "%Alias%" == ".." goto EnterAlias
 
-:RegQuery
-call :GetExeName "%ExeName%"
-set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%ExeName%
-reg query "%RegKey%" >nul
-if %ErrorLevel% neq 0 goto ExitError
+:VerifyKey
+call :GetAlias "%Alias%"
+set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%Alias%
+call "%RegKeyExists%" "%RegKey%"
+if %ErrorLevel% neq 0 goto ExitResult
 
 
 :RegDelete
 reg delete "%RegKey%" /f >nul
-if %ErrorLevel% neq 0 goto ExitError
-echo Alias removed
-exit /b 0
-
-
-:ExitError
-echo %RegKey% 1>&2
-echo.
-if %UI% equ 0 call "%Here%PauseOnError.bat"
-exit /b 1
+if %ErrorLevel% neq 0 goto ExitResult
+set Result=0
+goto ExitResult
 
 
 :PrintHeader
 echo.
-echo Prevents a program/file from being opened from the "Run" dialog window using its alias.
+echo Prevents a program/file from being opened from the "Run" dialog window using its alias.'
 exit /b 0
 
 
 :Usage
 call :PrintHeader
-echo.
 echo.%FileName% Alias[.exe]
 echo.
 echo.  Alias    The name of the alias to remove, optionally followed by ".exe".
@@ -84,4 +78,17 @@ echo.    Removes the "npp.exe" alias from the registry.
 echo.
 echo.  C:\^>%FileName% "npp.exe"
 echo.    Removes the "npp.exe" alias from the registry.
-exit /b 1
+goto Exit
+
+
+:ExitResult
+if !Result! equ 0 (
+    echo Alias removed
+) else (
+    echo Invalid key name: %RegKey% 1>&2
+    if !UI! equ 0 call "%PauseOnError%"
+)
+
+
+:Exit
+@%ComSpec% /c exit !Result! >nul
