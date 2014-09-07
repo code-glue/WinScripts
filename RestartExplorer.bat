@@ -3,6 +3,7 @@
 :: %License%
 
 SetLocal
+
 set FileName=%~n0
 
 if [%1] == [] goto UI
@@ -13,7 +14,7 @@ if /i "%~1" == "/q" goto Restart
 :UI
 echo.
 echo Continuing will close all of your Windows Explorer windows.
-set /p Continue=Continue? [y/n]: 
+set /p Continue="Continue? [y/n]: " %=%
 if errorlevel 1 set "Continue=" & verify>nul
 if /i "%Continue%" == "y" goto Restart
 if /i "%Continue%" == "n" exit /b
@@ -22,7 +23,7 @@ goto UI
 
 :Restart
 echo.
-echo Restarting explorer.exe
+echo Restarting explorer.exe ...
 taskkill /im explorer.exe /f >nul
 set Result=%ErrorLevel%
 start explorer
@@ -31,7 +32,7 @@ exit /b
 
 
 :Usage
-echo Restarts explorer.exe
+echo Restarts explorer.exe.
 echo.
 echo.%FileName% [/Q]
 echo.
