@@ -2,14 +2,15 @@
 
 :: %License%
 
-
 SetLocal EnableDelayedExpansion
 
-if not [%1] == [] goto Usage
-
-set Here=%~dp0
+set Result=1
+set FileName=%~n0
+set PauseOnError=%~dp0PauseOnError.bat
 set RegKey=HKCR\SystemFileAssociations\text\shell\open\command
 set Count=0
+
+if not [%1] == [] goto Usage
 
 for /f "delims=  " %%a in ('reg query "!RegKey!" /ve') do (
     for %%b in (%%a) do (
@@ -20,17 +21,22 @@ for /f "delims=  " %%a in ('reg query "!RegKey!" /ve') do (
 
 :Expand
 for /f "delims=" %%a in ('echo "%TextEditor%"') do set TextEditor=%%~a
+if not "%TextEditor%" == "" set Result=0 & echo %TextEditor%
+goto ExitResult
 
-if "%TextEditor%" == "" (
-    echo Failed to find text editor. 1>&2
-    call "%Here%PauseOnError.bat"
-    exit /b 1
-)
-
-echo %TextEditor%
-exit /b 0
 
 :Usage
 echo.
 echo Gets the default editor for text files.
-exit /b 1
+echo.
+echo Usage:
+echo.%FileName% ^<No Parameters^>
+goto Exit
+
+
+:ExitResult
+if %Result% neq 0 echo %FileName%: Failed to find text editor. 1>&2 & call "%PauseOnError%"
+
+
+:Exit
+@%ComSpec% /c exit %Result% >nul
