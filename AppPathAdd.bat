@@ -28,7 +28,7 @@ call :PrintHeader
 
 :EnterPath
 :: Prompt the user for the path
-set /p FilePath=Enter path to exe file [Ctrl+C to exit]: %=%
+set /p FilePath="Enter path to exe file [Ctrl+C to exit]: " %=%
 if %ErrorLevel% neq 0 set "FilePath=" & verify>nul & goto EnterPath
 
 :: Remove quotes
@@ -74,7 +74,7 @@ goto ExitPause
 
 :PrintInvalidPath
 echo.
-echo File does not exist: %FilePath% 1>&2
+echo %FileName%: File does not exist: %FilePath% 1>&2
 echo.
 goto ExitPause
 

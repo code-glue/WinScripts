@@ -53,14 +53,14 @@ goto ExitResult
 
 :PrintHeader
 echo.
-echo Prevents a program/file from being opened from the "Run" dialog window using its alias.'
+echo Prevents a program/file from being opened from the "Run" dialog window using its alias.
 echo.
 exit /b 0
 
 
 :Usage
 call :PrintHeader
-echo.%FileName% Alias[.exe]
+echo.%FileName% [Alias[.exe]]
 echo.
 echo.  Alias    The name of the alias to remove, optionally followed by ".exe".
 echo.
