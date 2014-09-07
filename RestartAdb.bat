@@ -24,6 +24,7 @@ echo.
 echo.%FileName% ^<No Parameters^>
 goto Exit
 
+
 :ExitResult
 if %Result% neq 0 call "%PauseOnError%"
 
