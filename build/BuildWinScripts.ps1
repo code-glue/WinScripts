@@ -100,68 +100,61 @@ begin
             "    $_  "
         }
 
-        $usageLines = @($newLine, '___', "## $fileName") + $usageLines
+        $usageLines = @($newLine, '___', "### $fileName") + $usageLines
         $usageLines -join $newLine
     }
 }
 
 process
 {
-    try
-    {
-        $outDir =
-            if (Test-Path $OutputDir)
-            {
-                Resolve-Path $OutputDir
-            }
-            else
-            {
-                New-Item -Type Directory $OutputDir -ErrorAction Stop
-            }
-
-        $ScriptDir, $outDir | foreach {
-            $item = Get-Item -LiteralPath $_ -ErrorAction SilentlyContinue
-
-            if ($item -eq $null -or @($item).Count -ne 1 -or -not $item.PSIsContainer)
-            {
-                throw [System.IO.FileNotFoundException]"'$_' is not a directory"
-            }
-        }
-
-        $targetPath  = Join-Path $outDir "$projectName.v$version"
-        $zipPath     = "$targetPath.{0}.zip" -f $revision.ToString("D4")
-
-        Remove-Item "$targetPath" -Recurse -Force -ErrorAction SilentlyContinue
-
-        if ($Zip)
+    $outDir =
+        if (Test-Path $OutputDir)
         {
-            Remove-Item $zipPath -Force -ErrorAction SilentlyContinue
+            Resolve-Path $OutputDir
+        }
+        else
+        {
+            New-Item -Type Directory $OutputDir -ErrorAction Stop
         }
 
-        Get-ChildItem $ScriptDir *.bat | foreach {
-            $readMe += GetUsage $_.FullName
-            $contents = [System.IO.File]::ReadAllText($_.FullName) -replace '::\s*%License%', $licenseBat
-            writeScriptFile $_.Name $contents ascii
+    $ScriptDir, $outDir | foreach {
+        $item = Get-Item -LiteralPath $_ -ErrorAction SilentlyContinue
+
+        if ($item -eq $null -or @($item).Count -ne 1 -or -not $item.PSIsContainer)
+        {
+            throw [System.IO.FileNotFoundException]"'$_' is not a directory"
         }
+    }
+
+    $targetPath  = Join-Path $outDir "$projectName.v$version"
+    $zipPath     = "$targetPath.{0}.zip" -f $revision.ToString("D4")
+
+    Remove-Item "$targetPath" -Recurse -Force -ErrorAction SilentlyContinue
+
+    if ($Zip)
+    {
+        Remove-Item $zipPath -Force -ErrorAction SilentlyContinue
+    }
+
+    Get-ChildItem $ScriptDir *.bat | foreach {
+        $readMe += GetUsage $_.FullName
+        $contents = [System.IO.File]::ReadAllText($_.FullName) -replace '::\s*%License%', $licenseBat
+        writeScriptFile $_.Name $contents ascii
+    }
 
         
-        writeScriptFile "ReadMe.md" $readMe utf8
+    writeScriptFile "ReadMe.md" $readMe utf8
 
-        if ($Zip)
+    if ($Zip)
+    {
+        if (-not ([System.Management.Automation.PSTypeName]'System.IO.Compression.ZipFile').Type)
         {
-            if (-not ([System.Management.Automation.PSTypeName]'System.IO.Compression.ZipFile').Type)
-            {
-                Add-Type -AssemblyName System.IO.Compression.FileSystem
-            }
-
-            Write-Host "Creating zip file $zipPath"
-            [System.IO.Compression.ZipFile]::CreateFromDirectory($targetPath, $zipPath, 'Optimal', $true)
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
         }
 
-        ++$revision > "$here\Revision.txt"
+        Write-Host "Creating zip file $zipPath"
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($targetPath, $zipPath, 'Optimal', $true)
     }
-    catch
-    {
-        Write-Error -ErrorRecord $_
-    }
+
+    ++$revision > "$here\Revision.txt"
 }
