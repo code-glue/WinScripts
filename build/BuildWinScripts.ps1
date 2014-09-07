@@ -55,10 +55,12 @@ begin
     $here        = $PSCmdlet.MyInvocation.MyCommand.Definition | Split-Path
     $copyright   = "Copyright (c) $copyrightYear $companyName ($companyUrl)"
     $newLine     = [Environment]::NewLine
+    $revision    = [int][System.IO.File]::ReadAllText("$here\Revision.txt")
     $license     = [System.IO.File]::ReadAllText("$here\license.txt") -f $copyright
     $licensePs   = "<#{0}$license{0}#>{0}" -f $newLine
     $licenseBat  = $(($license -split $newLine | foreach { ($_, ":: $_")[[bool]$_] }) -join $newLine)
     $readMe      = [System.IO.File]::ReadAllText("$here\ReadMeHeader.txt")
+
     #endregion
 
 
@@ -127,7 +129,7 @@ process
         }
 
         $targetPath  = Join-Path $outDir "$projectName.v$version"
-        $zipPath     = "$targetPath.zip"
+        $zipPath     = "$targetPath.{0}.zip" -f $revision.ToString("D4")
 
         Remove-Item "$targetPath" -Recurse -Force -ErrorAction SilentlyContinue
 
@@ -155,6 +157,8 @@ process
             Write-Host "Creating zip file $zipPath"
             [System.IO.Compression.ZipFile]::CreateFromDirectory($targetPath, $zipPath, 'Optimal', $true)
         }
+
+        ++$revision > "$here\Revision.txt"
     }
     catch
     {
