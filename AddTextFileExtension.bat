@@ -61,7 +61,7 @@ echo.
 echo.Examples:
 echo.
 echo.  C:\^>%FileName%
-echo.    Prompts for the file extension
+echo.    Prompts for the file extension.
 echo.
 echo.  C:\^>%FileName% "txt"
 echo.    Adds a plain text handler for the .txt file extension.
