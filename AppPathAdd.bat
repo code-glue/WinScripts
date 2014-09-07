@@ -5,13 +5,13 @@
 
 SetLocal EnableDelayedExpansion
 
-set PauseOnError=%~dp0PauseOnError.bat
-set FileExists=%~dp0FileExists.bat
+set Result=1
 set FileName=%~n0
 set FilePath=%~f1
-set ExeDir=%~dp1
+set FileDir=%~dp1
 set Alias=%~n2
-set Result=1
+set PauseOnError=%~dp0PauseOnError.bat
+set FileExists=%~dp0FileExists.bat
 
 if [%1] == [] goto UI
 if "%~1" == "/?" goto Usage
@@ -50,11 +50,11 @@ if %ErrorLevel% neq 0 set "Alias=" & verify>nul
 
 :RegAdd
 for %%a in ("%FilePath%") do (
-    set ExeDir=%%~dpa
+    set FileDir=%%~dpa
 )
 
 :: Remove trailing slash
-if %ExeDir:~-1%==\ set ExeDir=%ExeDir:~0,-1%
+if %FileDir:~-1%==\ set FileDir=%FileDir:~0,-1%
 
 :: Default to filename if no alias is specified
 if "%Alias%" == "" (
@@ -66,7 +66,7 @@ if "%Alias%" == "" (
 set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%Alias%.exe
 
 reg add "%RegKey%" /f /ve /d "%FilePath%" >nul
-reg add "%RegKey%" /f /v "Path" /d "%ExeDir%" >nul
+reg add "%RegKey%" /f /v "Path" /d "%FileDir%" >nul
 
 if %ErrorLevel% equ 0 echo Alias added: "%Alias%" -^> "%FilePath%" & set Result=0
 goto ExitPause

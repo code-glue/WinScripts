@@ -4,11 +4,11 @@
 
 SetLocal EnableDelayedExpansion
 
+set Result=1
+set FileName=%~n0
+set Alias=%~1
 set PauseOnError=%~dp0PauseOnError.bat
 set RegKeyExists=%~dp0RegKeyExists.bat
-set Result=1
-set Alias=%~1
-set FileName=%~n0
 
 if [%1] == [] goto UI
 if "%~1" == "/?" goto Usage

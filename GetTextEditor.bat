@@ -29,7 +29,6 @@ goto ExitResult
 echo.
 echo Gets the default editor for text files.
 echo.
-echo Usage:
 echo.%FileName% ^<No Parameters^>
 goto Exit
 
