@@ -300,7 +300,7 @@ goto ExitResult
 
 :Usage
 echo.
-echo Adds a plain text handler for the following file extension, allowing files with the extension to be indexed, searched, and easily opened in any text editor:
+echo Adds a plain text handler for the following file extensions, allowing files with the extension to be indexed, searched, and easily opened in any text editor:
 for %%a in %TextFileExtensions% do (
     set AllExts=!AllExts!%%a 
 )
