@@ -8,7 +8,7 @@
 
 .PARAMETER ScriptDir
    Path to a directory containing script files.
-   
+
 .PARAMETER OutputDir
    The directory where the modified script files will be saved.
 
@@ -35,9 +35,9 @@ begin
 {
     Set-StrictMode -Version Latest
 
- 
+
     #region Contants
-    
+
     $projectName       = 'WinScripts'
     $version           = '1.0.1'
     $authorName        = 'Benjamin Lemmond'
@@ -48,7 +48,7 @@ begin
     $indent            = ' ' * 4
 
     #endregion
-    
+
 
     #region Internal variables
 
@@ -58,10 +58,10 @@ begin
     $license     = [System.IO.File]::ReadAllText("$here\license.txt") -f $copyright
     $licensePs   = "<#{0}$license{0}#>{0}" -f $newLine
     $licenseBat  = $(($license -split $newLine | foreach { ($_, ":: $_")[[bool]$_] }) -join $newLine)
-
+    $readMe      = [System.IO.File]::ReadAllText("$here\ReadMeHeader.txt")
     #endregion
 
-    
+
     function writeScriptFile($fileName, $content, [ValidateSet('utf8', 'ascii')]$encoding)
     {
         $path = "$targetPath\$fileName"
@@ -69,12 +69,44 @@ begin
         New-Item $path -Type File -Force > $null
         $content | Out-File $path -Encoding $encoding -Force
     }
+
+    function GetUsage($scriptPath)
+    {
+        $fileName = [System.IO.Path]::GetFileName($scriptPath)
+        $foundDescription = $false
+        $usageWritten = $false
+
+        $usageLines = & $scriptPath /? | Out-String -Stream | foreach {
+
+            if (-not $foundDescription)
+            {
+                if (-not $_) { return }
+                $foundDescription = $true
+                return "$_  "
+            }
+
+            if (-not $usageWritten)
+            {
+                if ($_) { return "$_  " }
+                $usageWritten = $true
+                return '', '**Usage:**  ', ''
+            }
+
+            if ($_ -eq "Examples:") { return "**$_**" }
+
+            if (-not $_) { return $_ }
+            "    $_  "
+        }
+
+        $usageLines = @($newLine, '___', "## $fileName") + $usageLines
+        $usageLines -join $newLine
+    }
 }
 
 process
 {
-    #try
-    #{
+    try
+    {
         $outDir =
             if (Test-Path $OutputDir)
             {
@@ -93,36 +125,39 @@ process
                 throw [System.IO.FileNotFoundException]"'$_' is not a directory"
             }
         }
-    
+
         $targetPath  = Join-Path $outDir "$projectName.v$version"
         $zipPath     = "$targetPath.zip"
 
         Remove-Item "$targetPath" -Recurse -Force -ErrorAction SilentlyContinue
-        
+
         if ($Zip)
         {
             Remove-Item $zipPath -Force -ErrorAction SilentlyContinue
         }
 
         Get-ChildItem $ScriptDir *.bat | foreach {
+            $readMe += GetUsage $_.FullName
             $contents = [System.IO.File]::ReadAllText($_.FullName) -replace '::\s*%License%', $licenseBat
             writeScriptFile $_.Name $contents ascii
         }
 
-    
+        
+        writeScriptFile "ReadMe.md" $readMe utf8
+
         if ($Zip)
         {
             if (-not ([System.Management.Automation.PSTypeName]'System.IO.Compression.ZipFile').Type)
             {
                 Add-Type -AssemblyName System.IO.Compression.FileSystem
             }
-    
+
             Write-Host "Creating zip file $zipPath"
             [System.IO.Compression.ZipFile]::CreateFromDirectory($targetPath, $zipPath, 'Optimal', $true)
         }
-    #}
-    #catch
-    #{
-    #    Write-Error -ErrorRecord $_
-    #}
+    }
+    catch
+    {
+        Write-Error -ErrorRecord $_
+    }
 }
