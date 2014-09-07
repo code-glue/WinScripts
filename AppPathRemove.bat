@@ -26,19 +26,16 @@ exit /b 0
 
 :UI
 call :PrintHeader
-echo.
 
 
 :EnterAlias
 set /p Alias="Enter alias name to remove [Ctrl+C to exit]: " %=%
 if %ErrorLevel% neq 0 set "Alias=" & verify >nul & goto EnterAlias
 
-:: Remove spaces
-set Alias=%Alias: =%
-
 if "%Alias%" == "" goto EnterAlias
 if "%Alias%" == "." goto EnterAlias
 if "%Alias%" == ".." goto EnterAlias
+
 
 :VerifyKey
 call :GetAlias "%Alias%"
@@ -57,6 +54,7 @@ goto ExitResult
 :PrintHeader
 echo.
 echo Prevents a program/file from being opened from the "Run" dialog window using its alias.'
+echo.
 exit /b 0
 
 
@@ -80,10 +78,10 @@ goto Exit
 
 
 :ExitResult
-if !Result! equ 0 (
-    echo Alias removed
-) else (
-    echo Invalid key name: %RegKey% 1>&2
+if !Result! neq 0 (
+    echo.
+    echo %FileName%: Alias not found: "%Alias%" 1>&2
+    echo.
     call "%PauseOnError%"
 )
 

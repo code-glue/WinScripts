@@ -1,7 +1,8 @@
 @echo off
 
 :: %License%
-    
+
+
 SetLocal EnableDelayedExpansion
 
 set PauseOnError=%~dp0PauseOnError.bat
@@ -43,10 +44,8 @@ for %%a in ("!FilePath!") do (
 )
 
 :: Prompt the user for the alias
-set /p Alias=Enter Alias. Press Enter to use the file name [Ctrl+C to exit]: 
+set /p Alias="Enter Alias. Leave blank to use the file name [Ctrl+C to exit]: " %=%
 if %ErrorLevel% neq 0 set "Alias=" & verify>nul
-
-goto RegAdd
 
 
 :RegAdd
@@ -70,13 +69,14 @@ reg add "%RegKey%" /f /ve /d "%FilePath%" >nul
 reg add "%RegKey%" /f /v "Path" /d "%ExeDir%" >nul
 
 if %ErrorLevel% equ 0 echo Alias added: "%Alias%" -^> "%FilePath%" & set Result=0
-goto Exit
+goto ExitPause
 
 
 :PrintInvalidPath
 echo.
-echo File does not exist: "%FilePath%" 1>&2
-goto Exit
+echo File does not exist: %FilePath% 1>&2
+echo.
+goto ExitPause
 
 
 :PrintHeader
@@ -104,7 +104,12 @@ echo.    Runs Notepad++ when "notepad++" or "notepad++.exe" is entered.
 echo.
 echo.  C:\^>%FileName% "C:\Program Files (x86)\NotePad++\notepad++.exe" npp
 echo.    Runs Notepad++ when "npp" or "npp.exe" is entered.
+goto Exit
+
+
+:ExitPause
+if !Result! neq 0 call "%PauseOnError%"
+
 
 :Exit
-if !Result! neq 0 call "%PauseOnError%"
 @%ComSpec% /c exit !Result! >nul
