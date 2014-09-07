@@ -9,7 +9,6 @@ set RegKeyExists=%~dp0RegKeyExists.bat
 set Result=1
 set Alias=%~1
 set FileName=%~n0
-set UI=0
 
 if [%1] == [] goto UI
 if "%~1" == "/?" goto Usage
@@ -26,7 +25,6 @@ exit /b 0
 
 
 :UI
-set UI=1
 call :PrintHeader
 echo.
 
@@ -86,7 +84,7 @@ if !Result! equ 0 (
     echo Alias removed
 ) else (
     echo Invalid key name: %RegKey% 1>&2
-    if !UI! equ 0 call "%PauseOnError%"
+    call "%PauseOnError%"
 )
 
 
