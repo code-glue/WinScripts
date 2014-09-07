@@ -4,7 +4,38 @@
 Various scripts for automating and tweaking Windows I've created over the years.
 
 ___
-## AppPathAdd.bat
+### AddCommonTextFileExts.bat
+Adds a plain text handler for the following file extension, allowing files with the extension to be indexed, searched, and easily opened in any text editor:  
+
+**Usage:**  
+
+    ada adb addin ads ahk ammo arena as asc asm asp atr au3 aut aux axl bas bat bhc body bot bsh c camera cbd cbl cc cdb cdc cfg cfm cgi cls cmake cmd cnf cob conf config cpp cs csdl csproj css ctl cue cxx d def defs dfm diff diz dob docbook dotsettings dpk dpr dsm dsp dsr dsw dtd edmx efx ent f f2k f90 f95 filters for frames frm g2skin gametype generate git gitignore gitmodules gore gradle gsc h hh hpp hs hta htd htm html htt hud hxa hxc hxk hxt hxx idl idx il iml impacts inc inf ini instance inview isl iss itcl item java js jsfl jsp kix kml las lhs lisp litcoffee log lsp lst lua m mak map mapcycle master material md menu miscents mission ml mli ms msl mx name nav nfo npc nsh nsi nt objectives odl outfitting pag pas patch php php3 php4 phtml pl player pln plx pm pod poses pp pro properties props ps ps1 psm1 py pyproj pyw q3asm qe4 r rb rbw rc rc2 rdf recent reg rej resx rmd sample scm script ses settings sf sh shader shfbproj shock shtm shtml sif skl sln sma smd sml sp spb spec sps sql ss ssdl st str sty stype sun sv svg svh t targets tcl teams terrain tex theme thy toc tpl tt ttinclude tui tuo txt url user v vb vbproj vbs vcproj vcs vcxproj vdproj vh vhd vhdl voice vscontent vsdir vsprops vssettings vstdir vstheme vsz vxml wml wnt wpn wsdl xhtml xlf xliff xml xrc xsd xsl xslt xsml xul yml   
+
+    AddCommonTextFileExts <No Parameters>  
+
+___
+### AddTextFileExtension.bat
+Adds a plain text handler to the given file extension, allowing files with the extension to be indexed, searched, and easily opened in any text editor.  
+
+**Usage:**  
+
+    AddTextFileExtension [.]Extension  
+
+      Extension    The name of the extension to add, optionally prefixed by ".".  
+
+**Examples:**
+
+      C:\>AddTextFileExtension  
+        Prompts for the file extension  
+
+      C:\>AddTextFileExtension "txt"  
+        Adds a plain text handler for the .txt file extension.  
+
+      C:\>AddTextFileExtension ".txt"  
+        Adds a plain text handler for the .txt file extension.  
+
+___
+### AppPathAdd.bat
 Allows a program/file to be opened from the "Run" dialog window using an alias.  
 
 **Usage:**  
@@ -27,7 +58,7 @@ Allows a program/file to be opened from the "Run" dialog window using an alias.
         Runs Notepad++ when "npp" or "npp.exe" is entered.  
 
 ___
-## AppPathRemove.bat
+### AppPathRemove.bat
 Prevents a program/file from being opened from the "Run" dialog window using its alias.  
 
 **Usage:**  
@@ -48,7 +79,7 @@ Prevents a program/file from being opened from the "Run" dialog window using its
         Removes the "npp.exe" alias from the registry.  
 
 ___
-## ClearIconCache.bat
+### ClearIconCache.bat
 Clears the icon cache by running this command:  
     ie4uinit.exe -ClearIconCache  
 
@@ -57,7 +88,7 @@ Clears the icon cache by running this command:
     ClearIconCache <No Parameters>  
 
 ___
-## DirExists.bat
+### DirExists.bat
 Determines whether the given path refers to an existing directory.  
 Sets the ErrorLevel variable to 0 if the directory exists; otherwise, 1.  
 
@@ -82,7 +113,7 @@ Sets the ErrorLevel variable to 0 if the directory exists; otherwise, 1.
         Sets %ErrorLevel% to 1. Path exists but is a file.  
 
 ___
-## FileExists.bat
+### FileExists.bat
 Determines whether the given path refers to an existing file.  
 Sets the ErrorLevel variable to 0 if the file exists; otherwise, 1.  
 
@@ -104,16 +135,15 @@ Sets the ErrorLevel variable to 0 if the file exists; otherwise, 1.
         Sets %ErrorLevel% to 1. Path exists but is a directory.  
 
 ___
-## GetTextEditor.bat
+### GetTextEditor.bat
 Gets the default editor for text files.  
 
 **Usage:**  
 
-    Usage:  
     GetTextEditor <No Parameters>  
 
 ___
-## PauseOnError.bat
+### PauseOnError.bat
 Pauses the console if %PauseOnError% is set to 1; otherwise, does nothing.  
 
 **Usage:**  
@@ -121,7 +151,7 @@ Pauses the console if %PauseOnError% is set to 1; otherwise, does nothing.
     PauseOnError <No Parameters>  
 
 ___
-## RegKeyExists.bat
+### RegKeyExists.bat
 Determines whether the given path refers to an existing registry key.  
 Sets the ErrorLevel variable to 0 if the registry key exists; otherwise, 1.  
 
@@ -150,7 +180,7 @@ Sets the ErrorLevel variable to 0 if the registry key exists; otherwise, 1.
         Sets %ErrorLevel% to 1. Registry key does not exist.  
 
 ___
-## RestartAdb.bat
+### RestartAdb.bat
 Kills all instances of adb.exe and restarts it.  
 
 **Usage:**  
@@ -158,7 +188,7 @@ Kills all instances of adb.exe and restarts it.
     RestartAdb <No Parameters>  
 
 ___
-## RestartExplorer.bat
+### RestartExplorer.bat
 Restarts explorer.exe.  
 
 **Usage:**  
@@ -176,7 +206,7 @@ Restarts explorer.exe.
         Restarts explorer.exe without prompting.  
 
 ___
-## SetTextEditor.bat
+### SetTextEditor.bat
 Sets the default editor for text files.  
 
 **Usage:**  
@@ -192,10 +222,3 @@ Sets the default editor for text files.
 
       C:\>SetTextEditor "C:\Program Files (x86)\Notepad++\notepad++.exe"  
         Sets Notepad++ as the default text editor.  
-
-___
-## TextFileExtensions.bat
-Adds over 250 text file extensions, allowing files with these extensions to be indexed, searched, and easily opened in any text editor.  
-
-**Usage:**  
-
