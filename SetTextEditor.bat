@@ -8,7 +8,7 @@ SetLocal EnableDelayedExpansion
 set Result=1
 set ExePath=%~1
 set FileName=%~n0
-set PauseOnError=%~dp0PauseOnError.bat  
+set PauseOnError=%~dp0PauseOnError.bat
 set FileExists=%~dp0FileExists.bat
 
 if [%1] == [] goto UI
@@ -52,7 +52,7 @@ if %ErrorLevel% equ 0 set Result=0
 reg add "HKCR\SystemFileAssociations\text\shell\edit\command" /ve /d "\"%ExePath%\" \"%%1\"" /f >nul
 if %ErrorLevel% neq 0 set Result=1
 
-goto Exit
+goto ExitResult
 
 
 :PrintHeader
@@ -64,7 +64,7 @@ exit /b 0
 :Usage
 call :PrintHeader
 echo.
-echo.%FileName% ExePath
+echo.%FileName% [ExePath]
 echo.
 echo.  ExePath    The path of the program to set as the default text editor.
 echo.
@@ -80,10 +80,11 @@ goto Exit
 
 :InvalidPath
 echo File does not exist: "%ExePath%" 1>&2
-goto Exit
+
+
+:ExitResult
+if !Result! neq 0 call "%PauseOnError%"
 
 
 :Exit
-if !Result! neq 0 call "%PauseOnError%"
 @%ComSpec% /c exit !Result! >nul
-

@@ -19,7 +19,8 @@ goto ExitResult
 
 
 :Usage
-echo. Kills all instances of adb.exe and restarts it.
+echo.
+echo Kills all instances of adb.exe and restarts it.
 echo.
 echo.%FileName% ^<No Parameters^>
 goto Exit
