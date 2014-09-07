@@ -11,7 +11,6 @@ set FilePath=%~f1
 set ExeDir=%~dp1
 set Alias=%~n2
 set Result=1
-set UI=0
 
 if [%1] == [] goto UI
 if "%~1" == "/?" goto Usage
@@ -23,7 +22,6 @@ goto RegAdd
 
 
 :UI
-set UI=1
 call :PrintHeader
 
 
@@ -37,7 +35,7 @@ set FilePath=%FilePath:"=%
 
 if [!FilePath!] == [] goto EnterPath
 
-:: Expand variables
+:: Expand path
 for %%a in ("!FilePath!") do (
     call set FilePath=%%~fa
     call "%FileExists%" "!FilePath!"
@@ -108,7 +106,5 @@ echo.  C:\^>%FileName% "C:\Program Files (x86)\NotePad++\notepad++.exe" npp
 echo.    Runs Notepad++ when "npp" or "npp.exe" is entered.
 
 :Exit
-if !Result! neq 0 (
-    if !UI! equ 0 call "%PauseOnError%"
-)
+if !Result! neq 0 call "%PauseOnError%"
 @%ComSpec% /c exit !Result! >nul
