@@ -4,6 +4,25 @@
 Various scripts for automating and tweaking Windows I've created over the years.
 
 ___
+### AdbSuPull.bat
+adbSuPull RemotePath [LocalPath]  
+
+**Usage:**  
+
+    Copies files/directories from a rooted Android device to a Windows path.  
+    The files are temporarily copied to the directory "/mnt/sdcard" on the device.  
+    The Android device must have enough free space to allow this operation.  
+
+      RemotePath   Specifies the path to the file or directory on  
+                   the rooted Android device.  
+
+      LocalPath    Optionally specifies the destination path. This can be a  
+                   Windows local path (C:\folder) or a UNC path  
+                   (\\server\share).  
+                   Defaults to adbSuPull_%UserName%_%TimeStamp%  
+                   in the current working directory.  
+
+___
 ### AddBatchFileExtension.bat
 Makes the specified file extension behave like a batch file (i.e. .bat, .cmd. etc).  
 
