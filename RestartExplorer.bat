@@ -15,16 +15,12 @@ if /i "%~1" == "/q" goto Restart
 
 
 :UI
-call :PrintHeader
-
-
-:Confirm
 echo Continuing will close all of your Windows Explorer windows.
 set /p Continue="Continue? [y/n]: " %=%
 if %ErrorLevel% neq 0 set "Continue=" & verify >nul
 if /i "%Continue%" == "y" goto Restart
 if /i "%Continue%" == "n" goto Exit
-goto Confirm
+goto UI
 
 
 :Restart
@@ -37,14 +33,13 @@ goto ExitResult
 
 
 :PrintHeader
-echo.
-echo Restarts explorer.exe.
-echo.
 exit /b 0
 
 
 :Usage
-call :PrintHeader
+echo.
+echo Restarts explorer.exe.
+echo.
 echo.%FileName% [/Q]
 echo.
 echo.  /Q    Quiet mode, do not ask if ok to restart explorer.exe.

@@ -2,7 +2,7 @@
 
 echo Building deployment package...
 powershell -NoProfile -NonInteractive -Command "%~dp0%~n0.ps1 -ScriptDir .. -OutputDir ..\Download -Zip -ErrorAction Stop"
-if errorlevel 1 pause & exit /b
+if %ErrorLevel% neq 0 pause & exit /b 1
 
 echo.
 echo Success
