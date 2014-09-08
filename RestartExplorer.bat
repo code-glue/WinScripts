@@ -4,36 +4,47 @@
 
 SetLocal
 
+set Result=1
 set FileName=%~n0
+set PauseOnError=%~dp0PauseOnError.bat
 
 if [%1] == [] goto UI
 if "%~1" == "/?" goto Usage
 if not [%2] == [] goto Usage
 if /i "%~1" == "/q" goto Restart
 
+
 :UI
-echo.
+call :PrintHeader
+
+
+:Confirm
 echo Continuing will close all of your Windows Explorer windows.
 set /p Continue="Continue? [y/n]: " %=%
-if errorlevel 1 set "Continue=" & verify>nul
+if %ErrorLevel% neq 0 set "Continue=" & verify >nul
 if /i "%Continue%" == "y" goto Restart
-if /i "%Continue%" == "n" exit /b
-goto UI
+if /i "%Continue%" == "n" goto Exit
+goto Confirm
 
 
 :Restart
 echo.
 echo Restarting explorer.exe ...
 taskkill /im explorer.exe /f >nul
-set Result=%ErrorLevel%
+if %ErrorLevel% equ 0 set Result=0
 start explorer
-if not "%Result%" == "0" pause & exit /b %Result%
-exit /b
+goto ExitResult
+
+
+:PrintHeader
+echo.
+echo Restarts explorer.exe.
+echo.
+exit /b 0
 
 
 :Usage
-echo Restarts explorer.exe.
-echo.
+call :PrintHeader
 echo.%FileName% [/Q]
 echo.
 echo.  /Q    Quiet mode, do not ask if ok to restart explorer.exe.
@@ -45,4 +56,12 @@ echo.    Prompts to restart explorer.exe.
 echo.
 echo.  C:\^>%FileName% /q
 echo.    Restarts explorer.exe without prompting.
-exit /b
+goto Exit
+
+
+:ExitResult
+if %Result% neq 0 call "%PauseOnError%"
+
+
+:Exit
+@%ComSpec% /c exit %Result% >nul
