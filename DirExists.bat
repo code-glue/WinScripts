@@ -25,7 +25,7 @@ echo.
 echo.Examples:
 echo.
 echo.  C:\^>%FileName%
-echo.    Sets %%ErrorLevel%% to 1
+echo.    Sets %%ErrorLevel%% to 1.
 echo.
 echo.  C:\^>%FileName% "C:\Windows"
 echo.    Sets %%ErrorLevel%% to 0. Directory exists.

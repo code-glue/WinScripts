@@ -139,7 +139,7 @@ Sets the ErrorLevel variable to 0 if the directory exists; otherwise, 1.
 **Examples:**
 
       C:\>DirExists  
-        Sets %ErrorLevel% to 1  
+        Sets %ErrorLevel% to 1.  
 
       C:\>DirExists "C:\Windows"  
         Sets %ErrorLevel% to 0. Directory exists.  
@@ -164,7 +164,7 @@ Sets the ErrorLevel variable to 0 if the file exists; otherwise, 1.
 **Examples:**
 
       C:\>FileExists  
-        Sets %ErrorLevel% to 1  
+        Sets %ErrorLevel% to 1.  
 
       C:\>FileExists "C:\Windows\notepad.exe"  
         Sets %ErrorLevel% to 0. File exists.  
@@ -209,7 +209,7 @@ Sets the ErrorLevel variable to 0 if the registry key exists; otherwise, 1.
 **Examples:**
 
       C:\>RegKeyExists  
-        Sets %ErrorLevel% to 1  
+        Sets %ErrorLevel% to 1.  
 
       C:\>RegKeyExists "HKCR"  
         Sets %ErrorLevel% to 0. Registry key exists.  

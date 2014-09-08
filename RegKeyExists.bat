@@ -32,7 +32,7 @@ echo.
 echo.Examples:
 echo.
 echo.  C:\^>%FileName%
-echo.    Sets %%ErrorLevel%% to 1
+echo.    Sets %%ErrorLevel%% to 1.
 echo.
 echo.  C:\^>%FileName% "HKCR"
 echo.    Sets %%ErrorLevel%% to 0. Registry key exists.
