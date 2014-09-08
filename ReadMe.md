@@ -119,8 +119,7 @@ Prevents a program/file from being opened from the "Run" dialog window using its
 
 ___
 ### ClearIconCache.bat
-Clears the icon cache by running this command:  
-    ie4uinit.exe -ClearIconCache  
+Clears the icon cache  
 
 **Usage:**  
 
@@ -261,3 +260,55 @@ Sets the default editor for text files.
 
       C:\>SetTextEditor "C:\Program Files (x86)\Notepad++\notepad++.exe"  
         Sets Notepad++ as the default text editor.  
+
+___
+### ShortcutSuffixDisable.bat
+Disables the setting to append " - Shortcut" on new shortcuts.  
+Requires explorer.exe to be restarted.  
+
+**Usage:**  
+
+    ShortcutSuffixDisable [/Y | /N]  
+
+      /Y    Restart explorer.exe without prompting.  
+      /N    Do not restart explorer.exe.  
+
+**Examples:**
+
+      C:\>ShortcutSuffixDisable  
+        Disables the setting to append " - Shortcut" on new shortcuts,  
+        and prompts to restart explorer.exe.  
+
+      C:\>ShortcutSuffixDisable /y  
+        Disables the setting to append " - Shortcut" on new shortcuts,  
+        and restarts explorer.exe without prompting.  
+
+      C:\>ShortcutSuffixDisable /n  
+        Disables the setting to append " - Shortcut" on new shortcuts,  
+        and does not restart explorer.exe.  
+
+___
+### ShortcutSuffixEnable.bat
+Enables the setting to append " - Shortcut" on new shortcuts.  
+Requires explorer.exe to be restarted.  
+
+**Usage:**  
+
+    ShortcutSuffixEnable [/Y | /N]  
+
+      /Y    Restart explorer.exe without prompting.  
+      /N    Do not restart explorer.exe.  
+
+**Examples:**
+
+      C:\>ShortcutSuffixEnable  
+        Enables the setting to append " - Shortcut" on new shortcuts,  
+        and prompts to restart explorer.exe.  
+
+      C:\>ShortcutSuffixEnable /y  
+        Enables the setting to append " - Shortcut" on new shortcuts,  
+        and restarts explorer.exe without prompting.  
+
+      C:\>ShortcutSuffixEnable /n  
+        Enables the setting to append " - Shortcut" on new shortcuts,  
+        and does not restart explorer.exe.  
