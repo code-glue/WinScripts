@@ -5,7 +5,7 @@
 SetLocal
 
 set Result=1
-set FileName=%~n0
+set ScriptName=%~n0
 set PauseOnError=%~dp0PauseOnError.bat
 
 if not [%1] == [] goto Usage
@@ -22,7 +22,7 @@ goto ExitResult
 :Usage
 echo Clears the icon cache
 echo.
-echo.%FileName% ^<No Parameters^>
+echo.%ScriptName% ^<No Parameters^>
 goto Exit
 
 

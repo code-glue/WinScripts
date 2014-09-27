@@ -4,7 +4,7 @@
 
 SetLocal
 
-set FileName=%~n0
+set ScriptName=%~n0
 set Result=1
 
 if [%1] == [] goto Exit
@@ -18,7 +18,7 @@ echo.
 echo Determines whether the given path refers to an existing registry key.
 echo Sets the ErrorLevel variable to 0 if the registry key exists; otherwise, 1.
 echo.
-echo.%FileName% KeyName
+echo.%ScriptName% KeyName
 echo.
 echo.  KeyName  [\\Machine\]FullKey
 echo.           Machine - Name of remote machine, omitting defaults to the
@@ -31,13 +31,13 @@ echo.                          selected ROOTKEY
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%FileName%
+echo.  C:\^>%ScriptName%
 echo.    Sets %%ErrorLevel%% to 1.
 echo.
-echo.  C:\^>%FileName% "HKCR"
+echo.  C:\^>%ScriptName% "HKCR"
 echo.    Sets %%ErrorLevel%% to 0. Registry key exists.
 echo.
-echo.  C:\^>%FileName% "HKCU\BadKeyName"
+echo.  C:\^>%ScriptName% "HKCU\BadKeyName"
 echo.    Sets %%ErrorLevel%% to 1. Registry key does not exist.
 goto Exit
 

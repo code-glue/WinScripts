@@ -6,7 +6,7 @@
 SetLocal EnableDelayedExpansion
 
 set Result=1
-set FileName=%~n0
+set ScriptName=%~n0
 set FilePath=%~f1
 set FileDir=%~dp1
 set Alias=%~n2
@@ -74,7 +74,7 @@ goto ExitPause
 
 :PrintInvalidPath
 echo.
-echo %FileName%: File does not exist: %FilePath% 1>&2
+echo %ScriptName%: File does not exist: %FilePath% 1>&2
 echo.
 goto ExitPause
 
@@ -88,7 +88,7 @@ exit /b 0
 
 :Usage
 call :PrintHeader
-echo.%FileName% [Path [Alias]]
+echo.%ScriptName% [Path [Alias]]
 echo.
 echo.  Path   Path to the program/file that will be run/opened.
 echo.  Alias  Name that will be entered into the Run dialog window.
@@ -96,13 +96,13 @@ echo.         If excluded, defaults to the file's name.
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%FileName%
+echo.  C:\^>%ScriptName%
 echo.    Prompts for the file path and alias.
 echo.
-echo.  C:\^>%FileName% "C:\Program Files (x86)\NotePad++\notepad++.exe"
+echo.  C:\^>%ScriptName% "C:\Program Files (x86)\NotePad++\notepad++.exe"
 echo.    Runs Notepad++ when "notepad++" or "notepad++.exe" is entered.
 echo.
-echo.  C:\^>%FileName% "C:\Program Files (x86)\NotePad++\notepad++.exe" npp
+echo.  C:\^>%ScriptName% "C:\Program Files (x86)\NotePad++\notepad++.exe" npp
 echo.    Runs Notepad++ when "npp" or "npp.exe" is entered.
 goto Exit
 

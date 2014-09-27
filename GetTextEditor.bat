@@ -5,7 +5,7 @@
 SetLocal EnableDelayedExpansion
 
 set Result=1
-set FileName=%~n0
+set ScriptName=%~n0
 set PauseOnError=%~dp0PauseOnError.bat
 set RegKey=HKCR\SystemFileAssociations\text\shell\open\command
 set Count=0
@@ -29,12 +29,12 @@ goto ExitResult
 echo.
 echo Gets the default editor for text files.
 echo.
-echo.%FileName% ^<No Parameters^>
+echo.%ScriptName% ^<No Parameters^>
 goto Exit
 
 
 :ExitResult
-if %Result% neq 0 echo %FileName%: Failed to find text editor. 1>&2 & call "%PauseOnError%"
+if %Result% neq 0 echo %ScriptName%: Failed to find text editor. 1>&2 & call "%PauseOnError%"
 
 
 :Exit

@@ -6,7 +6,7 @@ SetLocal EnableDelayedExpansion
 
 set Result=1
 set PauseOnError=%~dp0PauseOnError.bat
-set FileName=%~n0
+set ScriptName=%~n0
 set Extension=%~1
 
 if [%1] == [] goto UI
@@ -49,19 +49,19 @@ exit /b 0
 
 :Usage
 call :PrintHeader
-echo.%FileName% [.]Extension
+echo.%ScriptName% [.]Extension
 echo.
 echo.  Extension    The name of the extension, optionally prefixed by ".".
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%FileName%
+echo.  C:\^>%ScriptName%
 echo.    Prompts for the file extension.
 echo.
-echo.  C:\^>%FileName% "sh"
+echo.  C:\^>%ScriptName% "sh"
 echo.    Makes files with the .sh file extension behave like a batch file.
 echo.
-echo.  C:\^>%FileName% ".sh"
+echo.  C:\^>%ScriptName% ".sh"
 echo.    Makes files with the .sh file extension behave like a batch file.
 goto Exit
 

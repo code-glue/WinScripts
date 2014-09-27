@@ -6,7 +6,7 @@ SetLocal EnableDelayedExpansion
 
 set Result=1
 set PauseOnError=%~dp0PauseOnError.bat
-set FileName=%~n0
+set ScriptName=%~n0
 set Extension=%~1
 
 if [%1] == [] goto UI
@@ -54,19 +54,19 @@ exit /b 0
 
 :Usage
 call :PrintHeader
-echo.%FileName% [.]Extension
+echo.%ScriptName% [.]Extension
 echo.
 echo.  Extension    The name of the extension to add, optionally prefixed by ".".
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%FileName%
+echo.  C:\^>%ScriptName%
 echo.    Prompts for the file extension.
 echo.
-echo.  C:\^>%FileName% "txt"
+echo.  C:\^>%ScriptName% "txt"
 echo.    Adds a plain text handler for the .txt file extension.
 echo.
-echo.  C:\^>%FileName% ".txt"
+echo.  C:\^>%ScriptName% ".txt"
 echo.    Adds a plain text handler for the .txt file extension.
 goto Exit
 

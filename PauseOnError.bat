@@ -5,7 +5,7 @@
 SetLocal
 
 set PauseOnError=1
-set FileName=%~n0
+set ScriptName=%~n0
 
 if not [%1] == [] goto Usage
 
@@ -16,7 +16,7 @@ goto Exit
 echo.
 echo Pauses the console if %%PauseOnError%% is set to 1; otherwise, does nothing.
 echo.
-echo.%FileName% ^<No Parameters^>
+echo.%ScriptName% ^<No Parameters^>
 
 
 :Exit

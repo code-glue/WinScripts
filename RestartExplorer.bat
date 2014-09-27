@@ -5,7 +5,7 @@
 SetLocal
 
 set Result=1
-set FileName=%~n0
+set ScriptName=%~n0
 set PauseOnError=%~dp0PauseOnError.bat
 
 if [%1] == [] goto UI
@@ -40,16 +40,16 @@ exit /b 0
 echo.
 echo Restarts explorer.exe.
 echo.
-echo.%FileName% [/Q]
+echo.%ScriptName% [/Q]
 echo.
 echo.  /Q    Quiet mode, do not ask if ok to restart explorer.exe.
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%FileName%
+echo.  C:\^>%ScriptName%
 echo.    Prompts to restart explorer.exe.
 echo.
-echo.  C:\^>%FileName% /q
+echo.  C:\^>%ScriptName% /q
 echo.    Restarts explorer.exe without prompting.
 goto Exit
 

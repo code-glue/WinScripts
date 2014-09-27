@@ -8,7 +8,7 @@ SetLocal EnableDelayedExpansion
 set Result=1
 set ExePath=%~1
 set ExeName=%~nx1
-set FileName=%~n0
+set ScriptName=%~n0
 set PauseOnError=%~dp0PauseOnError.bat
 set FileExists=%~dp0FileExists.bat
 
@@ -79,16 +79,16 @@ exit /b 0
 :Usage
 call :PrintHeader
 echo.
-echo.%FileName% [ExePath]
+echo.%ScriptName% [ExePath]
 echo.
 echo.  ExePath    The path of the program to set as the default text editor.
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%FileName%
+echo.  C:\^>%ScriptName%
 echo.    Prompts for the path.
 echo.
-echo.  C:\^>%FileName% "C:\Program Files (x86)\Notepad++\notepad++.exe"
+echo.  C:\^>%ScriptName% "C:\Program Files (x86)\Notepad++\notepad++.exe"
 echo.    Sets Notepad++ as the default text editor.
 goto Exit
 

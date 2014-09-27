@@ -5,7 +5,7 @@
 SetLocal EnableDelayedExpansion
 
 set Result=1
-set FileName=%~n0
+set ScriptName=%~n0
 set PauseOnError=%~dp0PauseOnError.bat
 set AddTextFileExtension=%~dp0AddTextFileExtension.bat
 
@@ -317,7 +317,7 @@ for %%a in %TextFileExtensions% do (
 )
 echo !AllExts!
 echo.
-echo.%FileName% ^<No Parameters^>
+echo.%ScriptName% ^<No Parameters^>
 goto Exit
 
 

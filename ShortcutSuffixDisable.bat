@@ -5,7 +5,7 @@
 SetLocal
 
 set Result=1
-set FileName=%~n0
+set ScriptName=%~n0
 set PauseOnError=%~dp0PauseOnError.bat
 set RestartExplorer=%~dp0RestartExplorer.bat
 set Restart=0
@@ -40,22 +40,22 @@ goto ExitResult
 echo Disables the setting to append " - Shortcut" on new shortcuts.
 echo Requires explorer.exe to be restarted.
 echo.
-echo.%FileName% [/Y ^| /N]
+echo.%ScriptName% [/Y ^| /N]
 echo.
 echo.  /Y    Restart explorer.exe without prompting.
 echo.  /N    Do not restart explorer.exe.
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%FileName%
+echo.  C:\^>%ScriptName%
 echo.    Disables the setting to append " - Shortcut" on new shortcuts,
 echo.    and prompts to restart explorer.exe.
 echo.
-echo.  C:\^>%FileName% /y
+echo.  C:\^>%ScriptName% /y
 echo.    Disables the setting to append " - Shortcut" on new shortcuts,
 echo.    and restarts explorer.exe without prompting.
 echo.
-echo.  C:\^>%FileName% /n
+echo.  C:\^>%ScriptName% /n
 echo.    Disables the setting to append " - Shortcut" on new shortcuts,
 echo.    and does not restart explorer.exe.
 goto Exit

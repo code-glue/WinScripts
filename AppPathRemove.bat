@@ -5,7 +5,7 @@
 SetLocal EnableDelayedExpansion
 
 set Result=1
-set FileName=%~n0
+set ScriptName=%~n0
 set Alias=%~1
 set PauseOnError=%~dp0PauseOnError.bat
 set RegKeyExists=%~dp0RegKeyExists.bat
@@ -60,19 +60,19 @@ exit /b 0
 
 :Usage
 call :PrintHeader
-echo.%FileName% [Alias[.exe]]
+echo.%ScriptName% [Alias[.exe]]
 echo.
 echo.  Alias    The name of the alias to remove, optionally followed by ".exe".
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%FileName%
+echo.  C:\^>%ScriptName%
 echo.    Prompts for the alias.
 echo.
-echo.  C:\^>%FileName% "npp"
+echo.  C:\^>%ScriptName% "npp"
 echo.    Removes the "npp.exe" alias from the registry.
 echo.
-echo.  C:\^>%FileName% "npp.exe"
+echo.  C:\^>%ScriptName% "npp.exe"
 echo.    Removes the "npp.exe" alias from the registry.
 goto Exit
 
@@ -80,7 +80,7 @@ goto Exit
 :ExitResult
 if !Result! neq 0 (
     echo.
-    echo %FileName%: Alias not found: "%Alias%" 1>&2
+    echo %ScriptName%: Alias not found: "%Alias%" 1>&2
     echo.
     call "%PauseOnError%"
 )
