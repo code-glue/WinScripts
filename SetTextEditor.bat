@@ -7,6 +7,7 @@ SetLocal EnableDelayedExpansion
 
 set Result=1
 set ExePath=%~1
+set ExeName=%~nx1
 set FileName=%~n0
 set PauseOnError=%~dp0PauseOnError.bat
 set FileExists=%~dp0FileExists.bat
@@ -38,7 +39,8 @@ if "%ExePath%" == ".." goto EnterAlias
 :VerifyPath
 :: Expand path
 for %%a in ("!ExePath!") do (
-    call set ExePath=%%~fa
+    set ExePath=%%~fa
+    set ExeName=%%~nxa
 )
 
 call "%FileExists%" "!ExePath!"
@@ -46,10 +48,23 @@ if %ErrorLevel% neq 0 goto InvalidPath
 
 
 :RegAdd
-reg add "HKCR\SystemFileAssociations\text\shell\open\command" /ve /d "\"%ExePath%\" \"%%1\"" /f >nul
+set TextShellPath=HKCR\SystemFileAssociations\text
+set AppPath=HKCR\Applications\%ExeName%\shell
+set Command=\"%ExePath%\" \"%%1\"
+
+reg add "%TextShellPath%\shell\open\command" /ve /d "\"%ExePath%\" \"%%1\"" /f >nul
 if %ErrorLevel% equ 0 set Result=0
 
-reg add "HKCR\SystemFileAssociations\text\shell\edit\command" /ve /d "\"%ExePath%\" \"%%1\"" /f >nul
+reg add "%TextShellPath%\shell\edit\command" /ve /d "\"%ExePath%\" \"%%1\"" /f >nul
+if %ErrorLevel% neq 0 set Result=1
+
+reg add "%TextShellPath%\OpenWithList\%ExeName%" /ve /f >nul
+if %ErrorLevel% neq 0 set Result=1
+
+reg add "%AppPath%\open\command" /ve /d "%Command%" /f >nul
+if %ErrorLevel% neq 0 set Result=1
+
+reg add "%AppPath%\edit\command" /ve /d "%Command%" /f >nul
 if %ErrorLevel% neq 0 set Result=1
 
 goto ExitResult
