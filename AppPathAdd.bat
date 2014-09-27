@@ -56,7 +56,7 @@ for %%a in ("%FilePath%") do (
 :: Remove trailing slash
 if %FileDir:~-1%==\ set FileDir=%FileDir:~0,-1%
 
-:: Default to filename if no alias is specified
+:: Default to file name if no alias is specified
 if "%Alias%" == "" (
     for %%a in ("%FilePath%") do set Alias=%%~na
 ) else (
