@@ -27,6 +27,7 @@ aut           ^
 aux           ^
 axl           ^
 bas           ^
+bash_history  ^
 bat           ^
 bhc           ^
 body          ^
@@ -209,6 +210,7 @@ reg           ^
 rej           ^
 resx          ^
 rmd           ^
+sam           ^
 sample        ^
 scm           ^
 script        ^
