@@ -2,12 +2,9 @@
 
 :: %License%
 
-SetLocal EnableDelayedExpansion
+SetLocal
 
 set Result=1
-set ScriptName=%~n0
-set PauseOnError=%~dp0PauseOnError.bat
-set AddTextFileExtension=%~dp0AddTextFileExtension.bat
 
 set TextFileExtensions=( ^
 .             ^
@@ -299,20 +296,21 @@ xul           ^
 yml           ^
 )
 
-if not [%1] == [] goto Usage
-
+if not [%1] == [] call :Usage & goto Exit
 set Result=0
 echo Adding a plain text persistent handler for the following extensions:
 echo.
 for %%a in %TextFileExtensions% do (
     echo | set /p= %%a 
-    call "%AddTextFileExtension%" "%%a" >nul
-    if !ErrorLevel! neq 0 set Result=1
+    call "%~dp0AddTextFileExtension.bat" "%%a" >nul
+    if %ErrorLevel% neq 0 set Result=1
 )
 
-goto ExitResult
+goto Exit
+
 
 :Usage
+SetLocal EnableDelayedExpansion
 echo.
 echo Adds a plain text handler for the following file extensions, allowing files with the extension to be indexed, searched, and easily opened in any text editor:
 for %%a in %TextFileExtensions% do (
@@ -320,13 +318,10 @@ for %%a in %TextFileExtensions% do (
 )
 echo !AllExts!
 echo.
-echo.%ScriptName% ^<No Parameters^>
-goto Exit
-
-
-:ExitResult
-if %Result% neq 0 call "%PauseOnError%"
+echo.%~n0 ^<No Parameters^>
+exit /b
 
 
 :Exit
+call "%~dp0PauseIfGui.bat" "%~f0"
 @%ComSpec% /c exit %Result% >nul
