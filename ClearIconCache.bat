@@ -2,33 +2,33 @@
 
 :: %License%
 
-SetLocal
+SetLocal DisableDelayedExpansion
 
 set Result=1
-set ScriptName=%~n0
-set PauseOnError=%~dp0PauseOnError.bat
 
-if not [%1] == [] goto Usage
+if not [%1] == [] call :Usage & goto Exit
 
 set IconCachePath=%LocalAppData%\IconCache.db
 if exist "%IconCachePath%" del "%IconCachePath%" /a
 if not exist "%IconCachePath%" set Result=0
 REM ie4uinit.exe -ClearIconCache
-
-if %ErrorLevel% equ 0 set Result=0
+REM if %ErrorLevel% equ 0 set Result=0
 goto ExitResult
 
 
 :Usage
 echo Clears the icon cache
 echo.
-echo.%ScriptName% ^<No Parameters^>
-goto Exit
-
+echo.%~n0 ^<No Parameters^>
+exit /b
 
 :ExitResult
-if %Result% neq 0 call "%PauseOnError%"
-
+if %Result% equ 0 (
+    echo Deleted file: "%IconCachePath%"
+) else (
+    (echo %~n0: Failed to delete file: "%IconCachePath%")1>&2
+)
 
 :Exit
+call "%~dp0PauseIfGui.bat" "%~f0"
 @%ComSpec% /c exit %Result% >nul
