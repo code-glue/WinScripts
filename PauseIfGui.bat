@@ -6,8 +6,8 @@ SetLocal
 
 if "%~1" == "/?" goto Usage
 
-if "%~1" == "" ((echo.%CmdCmdLine%)|"%WinDir%\System32\find.exe" /I "%~0")>nul && pause & exit /b 0
-((echo.%CmdCmdLine%)|"%WinDir%\System32\find.exe" /I "%~1")>nul && pause
+if "%~1" == "" ((echo.%CmdCmdLine%)|"%WinDir%\System32\find.exe" /I "%~0")>nul && (echo. & pause) & exit /b 0
+((echo.%CmdCmdLine%)|"%WinDir%\System32\find.exe" /I "%~1")>nul && (echo. & pause)
 exit /b 0
 
 
