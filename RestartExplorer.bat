@@ -2,25 +2,23 @@
 
 :: %License%
 
-SetLocal
+SetLocal DisableDelayedExpansion
 
 set Result=1
-set ScriptName=%~n0
-set PauseOnError=%~dp0PauseOnError.bat
 
-if [%1] == [] goto UI
-if "%~1" == "/?" goto Usage
-if not [%2] == [] goto Usage
+if [%1] == [] goto Confirm
+if "%~1" == "/?" call :Usage & goto Exit
+if not [%2] == [] call :Usage & goto Exit
 if /i "%~1" == "/q" goto Restart
 
 
-:UI
+:Confirm
 echo Continuing will close all of your Windows Explorer windows.
 set /p Continue="Continue? [y/n]: " %=%
 if %ErrorLevel% neq 0 set "Continue=" & verify >nul
 if /i "%Continue%" == "y" goto Restart
 if /i "%Continue%" == "n" goto Exit
-goto UI
+goto Confirm
 
 
 :Restart
@@ -29,34 +27,27 @@ echo Restarting explorer.exe ...
 taskkill /im explorer.exe /f >nul
 if %ErrorLevel% equ 0 set Result=0
 start explorer
-goto ExitResult
-
-
-:PrintHeader
-exit /b 0
+goto Exit
 
 
 :Usage
 echo.
 echo Restarts explorer.exe.
 echo.
-echo.%ScriptName% [/Q]
+echo.%~n0 [/Q]
 echo.
 echo.  /Q    Quiet mode, do not ask if ok to restart explorer.exe.
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%ScriptName%
+echo.  C:\^>%~n0
 echo.    Prompts to restart explorer.exe.
 echo.
-echo.  C:\^>%ScriptName% /q
+echo.  C:\^>%~n0 /q
 echo.    Restarts explorer.exe without prompting.
-goto Exit
-
-
-:ExitResult
-if %Result% neq 0 call "%PauseOnError%"
+exit /b
 
 
 :Exit
+call "%~dp0PauseIfGui.bat" "%~f0"
 @%ComSpec% /c exit %Result% >nul
