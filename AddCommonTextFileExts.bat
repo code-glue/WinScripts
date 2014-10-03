@@ -10,6 +10,7 @@ set PauseOnError=%~dp0PauseOnError.bat
 set AddTextFileExtension=%~dp0AddTextFileExtension.bat
 
 set TextFileExtensions=( ^
+.             ^
 ada           ^
 adb           ^
 addin         ^
