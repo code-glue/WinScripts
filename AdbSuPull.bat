@@ -8,15 +8,14 @@ set Result=1
 set RemotePath=%~1
 set LocalPath=%~f2
 set SdCardPath=/mnt/sdcard
-set PauseOnError=%~dp0PauseOnError.bat
 
-if [%1] == [] goto Usage
-if "%~1" == "/?" goto Usage
-if not [%3] == [] goto Usage
+if [%1] == [] call :Usage & goto Exit
+if "%~1" == "/?" call :Usage & goto Exit
+if not [%3] == [] call :Usage & goto Exit
 
 
 adb shell exit >nul
-if %ErrorLevel% neq 0 goto ExitResult
+if %ErrorLevel% neq 0 goto Exit
 
 :: Replace " " with "\ " (escape spaces)
 set RemotePath=%RemotePath: =\ %
@@ -32,7 +31,7 @@ echo.
 echo Copying to temp location "%TempPath%"
 echo.
 adb shell "su -c 'mkdir -p %TempPath%; cp -RLv %RemotePath% %TempPath%'"
-if %ErrorLevel% neq 0 goto ExitResult
+if %ErrorLevel% neq 0 goto Exit
 
 echo.
 echo Copying to destination "%LocalPath%"
@@ -46,12 +45,12 @@ echo Removing temp location "%TempPath%"
 echo.
 adb shell "rm -Rf '%TempPath%'"
 if %ErrorLevel% equ 0 set Result=0
-goto ExitResult
+goto Exit
 
 
 :Usage
 echo.
-echo.adbSuPull RemotePath [LocalPath]
+echo.%~n0 RemotePath [LocalPath]
 echo.
 echo Copies files/directories from a rooted Android device to a Windows path.
 echo The files are temporarily copied to the directory "%SdCardPath%" on the device.
@@ -65,12 +64,9 @@ echo.               Windows local path (C:\folder) or a UNC path
 echo.               (\\server\share).
 echo.               Defaults to adbSuPull_%%UserName%%_%%TimeStamp%%
 echo.               in the current working directory.
-goto Exit
-
-
-:ExitResult
-if %Result% neq 0 call "%PauseOnError%"
+exit /b
 
 
 :Exit
+call "%~dp0PauseIfGui.bat" "%~f0"
 @%ComSpec% /c exit %Result% >nul
