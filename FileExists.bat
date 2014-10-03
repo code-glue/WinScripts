@@ -2,7 +2,7 @@
 
 :: %License%
 
-SetLocal
+SetLocal DisableDelayedExpansion
 
 set Result=1
 
