@@ -124,9 +124,9 @@ if !Result! equ 0 (
     echo Added plain text persistent handler for file extension: !Extension!
 ) else (
     if !Result! equ 1 (
-        echo Failed to update extension: !Extension!
+        (echo Failed to update extension: !Extension!)1>&2
     ) else (
-        echo Invalid extension: !Extension!
+        (echo Invalid extension: !Extension!)1>&2
     )
 )
 EndLocal
