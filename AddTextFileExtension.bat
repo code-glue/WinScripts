@@ -11,7 +11,7 @@ goto BeginScript
 :EnterExtension
 call :PrintHeader
 :EnterExtensionSub
-set /p "Extension=Enter file extension [Ctrl+C to exit]:"
+set /p "Extension=Enter file extension [Ctrl+C to exit]: "
 SetLocal EnableDelayedExpansion
 if .!Extension! == . EndLocal & goto EnterExtensionSub
 set "NoSpaces=!Extension: =!"
@@ -34,8 +34,6 @@ set "Extension=%~1"
 
 
 :DoWork
-SetLocal EnableDelayedExpansion
-EndLocal
 call :Validate
 if %ErrorLevel% neq 0 set Result=2 & goto ExitResult
 call :CleanExtension
@@ -124,9 +122,9 @@ if !Result! equ 0 (
     echo Added plain text persistent handler for file extension: !Extension!
 ) else (
     if !Result! equ 1 (
-        (echo Failed to update extension: !Extension!)1>&2
+        (echo %~n0: Failed to update extension: !Extension!)1>&2
     ) else (
-        (echo Invalid extension: !Extension!)1>&2
+        (echo %~n0: Invalid extension: !Extension!)1>&2
     )
 )
 EndLocal
