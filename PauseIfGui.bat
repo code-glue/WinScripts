@@ -2,7 +2,7 @@
 
 :: %License%
 
-SetLocal EnableDelayedExpansion
+SetLocal
 
 if "%~1" == "/?" goto Usage
 
