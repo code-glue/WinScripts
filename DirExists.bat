@@ -4,12 +4,11 @@
 
 SetLocal
 
-set ScriptName=%~n0
 set Result=1
 
 if [%1] == [] goto Exit
-if "%~1" == "/?" goto Usage
-if not [%2] == [] goto Usage
+if "%~1" == "/?" call :Usage & goto Exit
+if not [%2] == [] call :Usage & goto Exit
 
 goto TestPath
 
@@ -18,24 +17,24 @@ echo.
 echo Determines whether the given path refers to an existing directory.
 echo Sets the ErrorLevel variable to 0 if the directory exists; otherwise, 1.
 echo.
-echo.%ScriptName% Path
+echo.%~n0 Path
 echo.
 echo.  Path    The path to test.
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%ScriptName%
+echo.  C:\^>%~n0
 echo.    Sets %%ErrorLevel%% to 1.
 echo.
-echo.  C:\^>%ScriptName% "C:\Windows"
+echo.  C:\^>%~n0 "C:\Windows"
 echo.    Sets %%ErrorLevel%% to 0. Directory exists.
 echo.
-echo.  C:\^>%ScriptName% "C:\"
+echo.  C:\^>%~n0 "C:\"
 echo.    Sets %%ErrorLevel%% to 0. Drives are considered directories.
 echo.
-echo.  C:\^>%ScriptName% "C:\Windows\notepad.exe"
+echo.  C:\^>%~n0 "C:\Windows\notepad.exe"
 echo.    Sets %%ErrorLevel%% to 1. Path exists but is a file.
-goto Exit
+exit /b
 
 
 :TestPath
