@@ -3,92 +3,101 @@
 :: %License%
 
 
-SetLocal EnableDelayedExpansion
+SetLocal DisableDelayedExpansion
 
 set Result=1
-set ScriptName=%~n0
+goto BeginScript
+
+
+:EnterFilePath
+call :PrintHeader
+:EnterFilePathSub
+set /p "FilePath=Enter path to exe file [Ctrl+C to exit]: "
+SetLocal EnableDelayedExpansion
+if .!FilePath! == . EndLocal & goto EnterFilePathSub
+set "NoSpaces=!FilePath: =!"
+if .!NoSpaces! == . EndLocal & goto EnterFilePathSub
+EndLocal
+call :ValidatePath
+if %ErrorLevel% neq 0 set Result=2 & goto ExitResult
+:EnterAlias
+set /p "Alias=Enter Alias. Leave blank to use the file name [Ctrl+C to exit]: "
+goto DoWork
+
+
+:BeginScript
 set FilePath=%~f1
 set FileDir=%~dp1
 set Alias=%~n2
-set PauseOnError=%~dp0PauseOnError.bat
-set FileExists=%~dp0FileExists.bat
-
-if [%1] == [] goto UI
-if "%~1" == "/?" goto Usage
-if not [%3] == [] goto Usage
-
-call "%FileExists%" "%FilePath%"
-if %ErrorLevel% neq 0 goto PrintInvalidPath
-goto RegAdd
-
-
-:UI
-call :PrintHeader
+SetLocal EnableDelayedExpansion
+if .!FilePath! == . EndLocal & goto EnterFilePath
+if !FilePath! == /? EndLocal & call :Usage & goto Exit
+set Arg3=%3
+if not .!Arg3! == . EndLocal & call :Usage & goto Exit
+EndLocal
+set "FilePath=%~1"
+call :ValidatePath
+if %ErrorLevel% neq 0 set Result=2 & goto ExitResult
 
 
-:EnterPath
-:: Prompt the user for the path
-set /p FilePath="Enter path to exe file [Ctrl+C to exit]: " %=%
-if %ErrorLevel% neq 0 set "FilePath=" & verify>nul & goto EnterPath
-
-:: Remove quotes
-set FilePath=%FilePath:"=%
-
-if [!FilePath!] == [] goto EnterPath
-
-:: Expand path
-for %%a in ("!FilePath!") do (
-    call set FilePath=%%~fa
-    call "%FileExists%" "!FilePath!"
-    if !ErrorLevel! neq 0 goto PrintInvalidPath
-)
-
-:: Prompt the user for the alias
-set /p Alias="Enter Alias. Leave blank to use the file name [Ctrl+C to exit]: " %=%
-if %ErrorLevel% neq 0 set "Alias=" & verify>nul
+:DoWork
+call :GetAlias
+call :UpdateRegistry
+if %ErrorLevel% equ 0 set Result=0
+goto ExitResult
 
 
-:RegAdd
-for %%a in ("%FilePath%") do (
+:ValidatePath
+for /f "tokens=*" %%a in ("%FilePath%") do (
+    set FilePath=%%~fa
     set FileDir=%%~dpa
+    set FileName=%%~na
 )
+
+call "%~dp0FileExists.bat" "%FilePath%"
+if %ErrorLevel% neq 0 exit /b 1
 
 :: Remove trailing slash
 if %FileDir:~-1%==\ set FileDir=%FileDir:~0,-1%
+exit /b 0
 
-:: Default to file name if no alias is specified
-if "%Alias%" == "" (
-    for %%a in ("%FilePath%") do set Alias=%%~na
+
+:GetAlias
+SetLocal EnableDelayedExpansion
+if .!Alias! == . (
+    EndLocal
+    set Alias=%FileName%
 ) else (
-    for %%a in ("%Alias%") do set Alias=%%~na
+    set NoSpaces=!Alias: =!
+    if .!NoSpaces! == . (
+        EndLocal
+        set Alias=%FileName%
+    )
 )
+exit /b
 
+
+:UpdateRegistry
 set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%Alias%.exe
 
 reg add "%RegKey%" /f /ve /d "%FilePath%" >nul
+if %ErrorLevel% neq 0 exit /b 1
+
 reg add "%RegKey%" /f /v "Path" /d "%FileDir%" >nul
-
-if %ErrorLevel% equ 0 echo Alias added: "%Alias%" -^> "%FilePath%" & set Result=0
-goto ExitPause
-
-
-:PrintInvalidPath
-echo.
-echo %ScriptName%: File does not exist: %FilePath% 1>&2
-echo.
-goto ExitPause
+if %ErrorLevel% neq 0 exit /b 1
+exit /b 0
 
 
 :PrintHeader
 echo.
 echo Allows a program/file to be opened from the "Run" dialog window using an alias.
 echo.
-exit /b 0
+exit /b
 
 
 :Usage
 call :PrintHeader
-echo.%ScriptName% [Path [Alias]]
+echo.%~n0 [Path [Alias]]
 echo.
 echo.  Path   Path to the program/file that will be run/opened.
 echo.  Alias  Name that will be entered into the Run dialog window.
@@ -96,20 +105,29 @@ echo.         If excluded, defaults to the file's name.
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%ScriptName%
+echo.  C:\^>%~n0
 echo.    Prompts for the file path and alias.
 echo.
-echo.  C:\^>%ScriptName% "C:\Program Files (x86)\NotePad++\notepad++.exe"
+echo.  C:\^>%~n0 "C:\Program Files (x86)\NotePad++\notepad++.exe"
 echo.    Runs Notepad++ when "notepad++" or "notepad++.exe" is entered.
 echo.
-echo.  C:\^>%ScriptName% "C:\Program Files (x86)\NotePad++\notepad++.exe" npp
+echo.  C:\^>%~n0 "C:\Program Files (x86)\NotePad++\notepad++.exe" npp
 echo.    Runs Notepad++ when "npp" or "npp.exe" is entered.
-goto Exit
+exit /b
 
 
-:ExitPause
-if !Result! neq 0 call "%PauseOnError%"
+:ExitResult
+if %Result% equ 0 (
+    echo Alias added: "%Alias%" -^> "%FilePath%"
+) else (
+    if %Result% equ 1 (
+        (echo %~n0: Failed to add alias "%Alias%" -^> "%FilePath%")1>&2
+    ) else (
+        (echo %~n0: File does not exist: %FilePath%)1>&2
+    )
+)
 
 
 :Exit
+call "%~dp0PauseIfGui.bat" "%~f0"
 @%ComSpec% /c exit !Result! >nul
