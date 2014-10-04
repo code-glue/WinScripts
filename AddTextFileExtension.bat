@@ -17,8 +17,6 @@ if .!Extension! == . EndLocal & goto EnterExtensionSub
 set "NoSpaces=!Extension: =!"
 if .!NoSpaces! == . EndLocal & goto EnterExtensionSub
 EndLocal
-call :Validate
-if %ErrorLevel% neq 0 set Result=2 & goto ExitResult
 goto DoWork
 
 
