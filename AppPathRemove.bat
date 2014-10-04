@@ -2,89 +2,102 @@
 
 :: %License%
 
-SetLocal EnableDelayedExpansion
+
+SetLocal DisableDelayedExpansion
 
 set Result=1
-set ScriptName=%~n0
-set Alias=%~1
-set PauseOnError=%~dp0PauseOnError.bat
-set RegKeyExists=%~dp0RegKeyExists.bat
+goto BeginScript
 
-if [%1] == [] goto UI
-if "%~1" == "/?" goto Usage
-if not [%2] == [] goto Usage
 
-goto VerifyKey
+:EnterAlias
+call :PrintHeader
+:EnterAliasSub
+set /p "Alias=Enter alias name to remove [Ctrl+C to exit]: "
+SetLocal EnableDelayedExpansion
+if .!Alias! == . EndLocal & goto EnterAliasSub
+set "NoSpaces=!Alias: =!"
+if .!NoSpaces! == . EndLocal & goto EnterAliasSub
+EndLocal
+goto DoWork
+
+
+:BeginScript
+set Alias=%1
+SetLocal EnableDelayedExpansion
+if .!Alias! == . EndLocal & goto EnterAlias
+if !Alias! == /? EndLocal & call :Usage & goto Exit
+set Arg2=%2
+if not .!Arg2! == . EndLocal & call :Usage & goto Exit
+EndLocal
+set "Alias=%~1"
+
+
+:DoWork
+call :GetAlias "%Alias%"
+call :Validate
+if %ErrorLevel% neq 0 set Result=2 & goto ExitResult
+call :UpdateRegistry
+if %ErrorLevel% equ 0 set Result=0
+goto ExitResult
 
 
 :GetAlias
 set Extension=%~x1
-if "%~x1" == "" set Extension=.exe
-set Alias=%~n1!Extension!
-exit /b 0
+SetLocal EnableDelayedExpansion
+if .!Extension! == . EndLocal & (set Alias=%~n1.exe)& exit /b
+EndLocal
+exit /b
 
 
-:UI
-call :PrintHeader
-
-
-:EnterAlias
-set /p Alias="Enter alias name to remove [Ctrl+C to exit]: " %=%
-if %ErrorLevel% neq 0 set "Alias=" & verify >nul & goto EnterAlias
-
-if "%Alias%" == "" goto EnterAlias
-if "%Alias%" == "." goto EnterAlias
-if "%Alias%" == ".." goto EnterAlias
-
-
-:VerifyKey
-call :GetAlias "%Alias%"
+:Validate
 set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%Alias%
-call "%RegKeyExists%" "%RegKey%"
-if %ErrorLevel% neq 0 goto ExitResult
+call "%~dp0RegKeyExists.bat" "%RegKey%"
+exit /b %ErrorLevel%
 
 
-:RegDelete
+:UpdateRegistry
 reg delete "%RegKey%" /f >nul
-if %ErrorLevel% neq 0 goto ExitResult
-set Result=0
-goto ExitResult
+exit /b %ErrorLevel%
 
 
 :PrintHeader
 echo.
 echo Prevents a program/file from being opened from the "Run" dialog window using its alias.
 echo.
-exit /b 0
+exit /b
 
 
 :Usage
 call :PrintHeader
-echo.%ScriptName% [Alias[.exe]]
+echo.%~n0 [Alias[.exe]]
 echo.
 echo.  Alias    The name of the alias to remove, optionally followed by ".exe".
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%ScriptName%
+echo.  C:\^>%~n0
 echo.    Prompts for the alias.
 echo.
-echo.  C:\^>%ScriptName% "npp"
+echo.  C:\^>%~n0 "npp"
 echo.    Removes the "npp.exe" alias from the registry.
 echo.
-echo.  C:\^>%ScriptName% "npp.exe"
+echo.  C:\^>%~n0 "npp.exe"
 echo.    Removes the "npp.exe" alias from the registry.
-goto Exit
+exit /b
 
 
 :ExitResult
-if !Result! neq 0 (
-    echo.
-    echo %ScriptName%: Alias not found: "%Alias%" 1>&2
-    echo.
-    call "%PauseOnError%"
+if %Result% equ 0 (
+    echo Alias removed: "%Alias%"
+) else (
+    if %Result% equ 1 (
+        (echo %~n0: Failed to remove alias "%Alias%")1>&2
+    ) else (
+        (echo %~n0: Alias not found: "%Alias%")1>&2
+    )
 )
 
 
 :Exit
+call "%~dp0PauseIfGui.bat" "%~f0"
 @%ComSpec% /c exit !Result! >nul
