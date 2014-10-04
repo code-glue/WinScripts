@@ -2,104 +2,110 @@
 
 :: %License%
 
-
-SetLocal EnableDelayedExpansion
+SetLocal DisableDelayedExpansion
 
 set Result=1
-set ExePath=%~1
-set ExeName=%~nx1
-set ScriptName=%~n0
-set PauseOnError=%~dp0PauseOnError.bat
-set FileExists=%~dp0FileExists.bat
-
-if [%1] == [] goto UI
-if "%~1" == "/?" goto Usage
-if not [%2] == [] goto Usage
-
-goto VerifyPath
+goto BeginScript
 
 
-:UI
+:EnterExePath
 call :PrintHeader
-echo.
-
-
-:EnterPath
-set /p ExePath="Enter .exe file path for text editor [Ctrl^+C to exit]: " %=%
-if %ErrorLevel% neq 0 set "ExePath=" & verify >nul & goto EnterPath
-
-:: Remove quotes
+:EnterExePathSub
+set /p "ExePath=Enter .exe file path for text editor [Ctrl+C to exit]: "
+SetLocal EnableDelayedExpansion
+if .!ExePath! == . EndLocal & goto EnterExePathSub
+set "NoSpaces=!ExePath: =!"
+if .!NoSpaces! == . EndLocal & goto EnterExePathSub
+set "NoSpaces=!ExePath:"=!"
+if .!NoSpaces! == . EndLocal & goto EnterExePathSub
+EndLocal
 set ExePath=%ExePath:"=%
-
-if "%ExePath%" == "" goto :EnterAlias
-if "%ExePath%" == "." goto EnterAlias
-if "%ExePath%" == ".." goto EnterAlias
+goto DoWork
 
 
-:VerifyPath
-:: Expand path
-for %%a in ("!ExePath!") do (
-    set ExePath=%%~fa
-    set ExeName=%%~nxa
-)
+:BeginScript
+set ExePath=%1
+SetLocal EnableDelayedExpansion
+if .!ExePath! == . EndLocal & goto EnterExePath
+if !ExePath! == /? EndLocal & call :Usage & goto Exit
+set Arg2=%2
+if not .!Arg2! == . EndLocal & call :Usage & goto Exit
+EndLocal
+set "ExePath=%~1"
 
-call "%FileExists%" "!ExePath!"
-if %ErrorLevel% neq 0 goto InvalidPath
+
+:DoWork
+call :Validate
+if %ErrorLevel% neq 0 set Result=2 & goto ExitResult
+call :UpdateRegistry
+if %ErrorLevel% equ 0 set Result=0
+goto ExitResult
 
 
-:RegAdd
+:Validate
+for /f "tokens=*" %%a in ("%FilePath%") do set ExePath=%%~fa
+call "%~dp0FileExists.bat" "%ExePath%"
+if %ErrorLevel% neq 0 exit /b 1
+exit /b 0
+
+
+:UpdateRegistry
 set TextShellPath=HKCR\SystemFileAssociations\text
 set AppPath=HKCR\Applications\%ExeName%\shell
 set Command=\"%ExePath%\" \"%%1\"
 
 reg add "%TextShellPath%\shell\open\command" /ve /d "\"%ExePath%\" \"%%1\"" /f >nul
-if %ErrorLevel% equ 0 set Result=0
+if %ErrorLevel% neq 0 exit /b 1
 
 reg add "%TextShellPath%\shell\edit\command" /ve /d "\"%ExePath%\" \"%%1\"" /f >nul
-if %ErrorLevel% neq 0 set Result=1
+if %ErrorLevel% neq 0 exit /b 1
 
 reg add "%TextShellPath%\OpenWithList\%ExeName%" /ve /f >nul
-if %ErrorLevel% neq 0 set Result=1
+if %ErrorLevel% neq 0 exit /b 1
 
 reg add "%AppPath%\open\command" /ve /d "%Command%" /f >nul
-if %ErrorLevel% neq 0 set Result=1
+if %ErrorLevel% neq 0 exit /b 1
 
 reg add "%AppPath%\edit\command" /ve /d "%Command%" /f >nul
-if %ErrorLevel% neq 0 set Result=1
-
-goto ExitResult
+if %ErrorLevel% neq 0 exit /b 1
+exit /b 0
 
 
 :PrintHeader
 echo.
 echo Sets the default editor for text files.
-exit /b 0
+echo.
+exit /b
 
 
 :Usage
 call :PrintHeader
-echo.
-echo.%ScriptName% [ExePath]
+echo.%~n0 ExePath
 echo.
 echo.  ExePath    The path of the program to set as the default text editor.
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%ScriptName%
+echo.  C:\^>%~n0
 echo.    Prompts for the path.
 echo.
-echo.  C:\^>%ScriptName% "C:\Program Files (x86)\Notepad++\notepad++.exe"
+echo.  C:\^>%~n0 "C:\Program Files (x86)\Notepad++\notepad++.exe"
 echo.    Sets Notepad++ as the default text editor.
-goto Exit
-
-
-:InvalidPath
-echo File does not exist: "%ExePath%" 1>&2
+exit /b
 
 
 :ExitResult
-if !Result! neq 0 call "%PauseOnError%"
+if %Result% equ 0 (
+    echo Default text editor set to: "%ExePath%"
+) else (
+    if %Result% equ 1 (
+        (echo %~n0: Failed to set text editor: "%ExePath%")1>&2
+    ) else (
+        (echo %~n0: Invalid path: "%ExePath%")1>&2
+    )
+)
 
 
 :Exit
-@%ComSpec% /c exit !Result! >nul
+call "%~dp0PauseIfGui.bat" "%~f0"
+@%ComSpec% /c exit %Result% >nul
