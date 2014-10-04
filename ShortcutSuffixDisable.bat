@@ -2,68 +2,89 @@
 
 :: %License%
 
-SetLocal
+
+SetLocal DisableDelayedExpansion
 
 set Result=1
-set ScriptName=%~n0
-set PauseOnError=%~dp0PauseOnError.bat
 set RestartExplorer=%~dp0RestartExplorer.bat
 set Restart=0
 set UI=0
 
-if [%1] == [] set UI=1 & goto RegAdd
-if "%~1" == "/?" goto Usage
-if not [%2] == [] goto Usage
-if /i "%~1" == "/y" set Restart=1 & goto RegAdd
-if /i not "%~1" == "/n" goto Usage
+
+:InitArgs
+SetLocal EnableDelayedExpansion
+set Arg1=%1
+set Arg2=%2
+if !Arg1! == /? call :Usage & goto Exit
+if not .!Arg2! == . call :Usage & goto Exit
+if .!Arg1! == . EndLocal & set UI=1 & goto BeginScript
+EndLocal
+if /i "%~1" == "/y" set Restart=1 & goto BeginScript
+if /i not "%~1" == "/n" call :Usage & goto Exit
 
 
-:RegAdd
+:BeginScript
+call :UpdateRegistry
+set Result=%ErrorLevel%
+call :UpdateRegistryResult
+if %Result% equ 0 (
+    call :RestartExplorer
+    if %ErrorLevel% neq 0 set Result=1
+)
+goto Exit
+
+
+:UpdateRegistry
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer" /v "link" /t REG_BINARY /d 00000000 /f >nul
-if %ErrorLevel% equ 0 set Result=0
+exit /b %ErrorLevel%
 
-if %Result% neq 0 goto ExitResult
+
+:RestartExplorer
 if %UI% equ 1 (
+    echo.
     call "%RestartExplorer%"
-    set Result=%ErrorLevel%
-    goto ExitResult
+    exit /b %ErrorLevel%
 )
 
-if %Restart% equ 0 goto ExitResult
-
+if %Restart% equ 0 exit /b %ErrorLevel%
 call "%RestartExplorer%" /q
-set Result=%ErrorLevel%
-goto ExitResult
+exit /b %ErrorLevel%
 
 
 :Usage
 echo Disables the setting to append " - Shortcut" on new shortcuts.
 echo Requires explorer.exe to be restarted.
 echo.
-echo.%ScriptName% [/Y ^| /N]
+echo.%~n0 [/Y ^| /N]
 echo.
-echo.  /Y    Restart explorer.exe without prompting.
+echo.  /Y    Restart explorer.exe.
 echo.  /N    Do not restart explorer.exe.
 echo.
 echo.Examples:
 echo.
-echo.  C:\^>%ScriptName%
+echo.  C:\^>%~n0
 echo.    Disables the setting to append " - Shortcut" on new shortcuts,
 echo.    and prompts to restart explorer.exe.
 echo.
-echo.  C:\^>%ScriptName% /y
+echo.  C:\^>%~n0 /y
 echo.    Disables the setting to append " - Shortcut" on new shortcuts,
 echo.    and restarts explorer.exe without prompting.
 echo.
-echo.  C:\^>%ScriptName% /n
+echo.  C:\^>%~n0 /n
 echo.    Disables the setting to append " - Shortcut" on new shortcuts,
 echo.    and does not restart explorer.exe.
-goto Exit
+exit /b
 
 
-:ExitResult
-if %Result% neq 0 call "%PauseOnError%"
+:UpdateRegistryResult
+if %Result% equ 0 (
+    echo Shortcut suffix disabled.
+) else (
+   (echo %~n0: Failed to disable shortcut suffix.)1>&2
+)
+exit /b
 
 
 :Exit
+call "%~dp0PauseIfGui.bat" "%~f0"
 @%ComSpec% /c exit %Result% >nul
