@@ -78,7 +78,7 @@ begin
         $foundDescription = $false
         $usageWritten = $false
 
-        $scriptOutput = cmd /c "(set PauseIfGuiOff=1) & $scriptPath" /?
+        $scriptOutput = cmd /c "(set DisablePauseGui=1) & $scriptPath /?"
 
         $usageLines = $scriptOutput | Out-String -Stream | foreach {
 

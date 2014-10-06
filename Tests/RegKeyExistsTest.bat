@@ -32,4 +32,4 @@ echo Test failed: %Desc%
 
 
 :Exit
-call "%~dp0..\PauseIfGui.bat" "%~f0"
+call "%~dp0..\PauseGui.bat" "%~f0"

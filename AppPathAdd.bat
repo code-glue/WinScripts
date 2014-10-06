@@ -129,5 +129,5 @@ if %Result% equ 0 (
 
 
 :Exit
-call "%~dp0PauseIfGui.bat" "%~f0"
+call "%~dp0PauseGui.bat" "%~f0"
 @%ComSpec% /c exit !Result! >nul
