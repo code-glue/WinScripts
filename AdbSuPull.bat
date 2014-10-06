@@ -50,11 +50,11 @@ goto Exit
 
 :Usage
 echo.
-echo.%~n0 RemotePath [LocalPath]
-echo.
 echo Copies files/directories from a rooted Android device to a Windows path.
 echo The files are temporarily copied to the directory "%SdCardPath%" on the device.
 echo The Android device must have enough free space to allow this operation.
+echo.
+echo.%~n0 RemotePath [LocalPath]
 echo.
 echo.  RemotePath   Specifies the path to the file or directory on
 echo.               the rooted Android device.
