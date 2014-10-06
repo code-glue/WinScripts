@@ -17,7 +17,7 @@ set Arg1=%1
 set Arg2=%2
 if !Arg1! == /? call :Usage & goto Exit
 if not .!Arg2! == . call :Usage & goto Exit
-if .!Arg1! == . EndLocal & set UI=1 & goto BeginScript
+if .!Arg1! == . EndLocal & (set UI=1) & goto BeginScript
 EndLocal
 if /i "%~1" == "/y" set Restart=1 & goto BeginScript
 if /i not "%~1" == "/n" call :Usage & goto Exit

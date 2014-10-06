@@ -13,7 +13,7 @@ if not [%1] == [] call :Usage & goto Exit
 for /f "delims=  " %%a in ('reg query "%RegKey%" /ve') do (
     for %%b in (%%a) do (
         SetLocal EnableDelayedExpansion
-        if !Count! equ 3 EndLocal & set TextEditor=%%~b && goto Expand
+        if !Count! equ 3 EndLocal & (set TextEditor=%%~b) && goto Expand
         EndLocal
         set /a Count+=1
     )
