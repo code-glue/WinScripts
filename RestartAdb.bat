@@ -5,16 +5,19 @@
 SetLocal DisableDelayedExpansion
 
 set Result=1
- 
-if not [%1] == [] call :Usage & goto Exit
 
-taskkill /im adb.exe /f 2>nul
-if %ErrorLevel% neq 0 (
-    if %ErrorLevel% neq 128 goto Exit
-)
+SetLocal EnableDelayedExpansion
+set Arg1=%1
+if not .!Arg1! == . EndLocal & call :Usage & goto Exit
+EndLocal
+
+
+:DoWork
+call "%~dp0KillAdb.bat"
+if %ErrorLevel% neq 0 goto Exit
 
 adb start-server
-if %ErrorLevel% equ 0 set Result=0
+set Result=%ErrorLevel%
 goto Exit
 
 
