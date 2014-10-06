@@ -4,8 +4,17 @@
 
 SetLocal DisableDelayedExpansion
 
-if "%~1" == "/?" goto Usage
-if "%DisablePauseGui%" == "1" exit /b 0
+set Arg1=%1
+set "Arg1NoQuotes=%Arg1:"=%"
+set Arg2=%2
+
+SetLocal EnableDelayedExpansion
+if !Arg1NoQuotes! == /? EndLocal & call :Usage & goto Exit
+if not .!Arg2! == . EndLocal &  call :Usage & goto Exit
+if !DisablePauseGui! equ 1 EndLocal & goto Exit
+EndLocal
+
+
 if "%~1" == "" ((echo.%CmdCmdLine%)|"%WinDir%\System32\find.exe" /I "%~0")>nul && (echo. & pause) & exit /b 0
 ((echo.%CmdCmdLine%)|"%WinDir%\System32\find.exe" /I "%~1")>nul && (echo. & pause)
 exit /b 0
@@ -31,4 +40,8 @@ echo.     No operation is performed.
 echo.
 echo.  If AnyOtherFile.bat is opened from explorer.exe:
 echo.     Press any key to continue . . .
-exit /b 1
+exit /b
+
+
+:Exit
+@%ComSpec% /c exit %ErrorLevel% >nul

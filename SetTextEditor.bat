@@ -19,16 +19,18 @@ if .!NoSpaces! == . EndLocal & goto EnterExePathSub
 set "NoSpaces=!ExePath:"=!"
 if .!NoSpaces! == . EndLocal & goto EnterExePathSub
 EndLocal
-set ExePath=%ExePath:"=%
+set "ExePath=%ExePath:"=%"
 goto DoWork
 
 
 :BeginScript
-set ExePath=%1
-SetLocal EnableDelayedExpansion
-if .!ExePath! == . EndLocal & goto EnterExePath
-if !ExePath! == /? EndLocal & call :Usage & goto Exit
+set Arg1=%1
+set "Arg1NoQuotes=%Arg1:"=%"
 set Arg2=%2
+
+SetLocal EnableDelayedExpansion
+if .!Arg1! == . EndLocal & goto EnterExePath
+if !Arg1NoQuotes! == /? EndLocal & call :Usage & goto Exit
 if not .!Arg2! == . EndLocal & call :Usage & goto Exit
 EndLocal
 set "ExePath=%~1"

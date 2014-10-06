@@ -21,11 +21,13 @@ goto DoWork
 
 
 :BeginScript
-set Extension=%1
-SetLocal EnableDelayedExpansion
-if .!Extension! == . EndLocal & goto EnterExtension
-if !Extension! == /? EndLocal & call :Usage & goto Exit
+set Arg1=%1
+set "Arg1NoQuotes=%Arg1:"=%"
 set Arg2=%2
+
+SetLocal EnableDelayedExpansion
+if .!Arg1! == . EndLocal & goto EnterExtension
+if !Arg1NoQuotes! == /? EndLocal & call :Usage & goto Exit
 if not .!Arg2! == . EndLocal & call :Usage & goto Exit
 EndLocal
 set "Extension=%~1"

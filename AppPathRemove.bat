@@ -22,11 +22,13 @@ goto DoWork
 
 
 :BeginScript
-set Alias=%1
-SetLocal EnableDelayedExpansion
-if .!Alias! == . EndLocal & goto EnterAlias
-if !Alias! == /? EndLocal & call :Usage & goto Exit
+set Arg1=%1
+set "Arg1NoQuotes=%Arg1:"=%"
 set Arg2=%2
+
+SetLocal EnableDelayedExpansion
+if .!Arg1! == . EndLocal & goto EnterAlias
+if !Arg1NoQuotes! == /? EndLocal & call :Usage & goto Exit
 if not .!Arg2! == . EndLocal & call :Usage & goto Exit
 EndLocal
 set "Alias=%~1"
