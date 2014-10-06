@@ -4,8 +4,9 @@
 
 SetLocal DisableDelayedExpansion
 
+echo PauseIfGuiOff:"%PauseIfGuiOff%"
 if "%~1" == "/?" goto Usage
-
+if "%PauseIfGuiOff%" == "1" exit /b 0
 if "%~1" == "" ((echo.%CmdCmdLine%)|"%WinDir%\System32\find.exe" /I "%~0")>nul && (echo. & pause) & exit /b 0
 ((echo.%CmdCmdLine%)|"%WinDir%\System32\find.exe" /I "%~1")>nul && (echo. & pause)
 exit /b 0
