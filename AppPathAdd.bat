@@ -26,16 +26,19 @@ goto DoWork
 
 
 :BeginScript
-set FilePath=%1
-SetLocal EnableDelayedExpansion
-if .!FilePath! == . EndLocal & goto EnterFilePath
-if !FilePath! == /? EndLocal & call :Usage & goto Exit
+set Arg1=%1
+set "Arg1NoQuotes=%Arg1:"=%"
 set Arg3=%3
+
+SetLocal EnableDelayedExpansion
+if .!Arg1! == . EndLocal & goto EnterFilePath
+if !Arg1NoQuotes! == /? EndLocal & call :Usage & goto Exit
 if not .!Arg3! == . EndLocal & call :Usage & goto Exit
 EndLocal
+
 set "FilePath=%~f1"
-set FileDir=%~dp1
-set Alias=%~n2
+set "FileDir=%~dp1"
+set "Alias=%~n2"
 call :ValidatePath
 if %ErrorLevel% neq 0 set Result=2 & goto ExitResult
 
