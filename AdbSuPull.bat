@@ -5,11 +5,11 @@
 SetLocal DisableDelayedExpansion
 
 set Result=1
-
-SetLocal EnableDelayedExpansion
 set Arg1=%1
 set Arg1NoQuotes=%~1
 set Arg3=%3
+
+SetLocal EnableDelayedExpansion
 if .!Arg1! == . EndLocal & call :Usage & goto Exit
 if !Arg1NoQuotes! == /? EndLocal & call :Usage & goto Exit
 if not .!Arg3! == . EndLocal & call :Usage & goto Exit

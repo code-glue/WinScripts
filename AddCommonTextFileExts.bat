@@ -296,8 +296,8 @@ xul           ^
 yml           ^
 )
 
-SetLocal EnableDelayedExpansion
 set Arg1=%1
+SetLocal EnableDelayedExpansion
 if not .!Arg1! == . EndLocal & call :Usage & goto Exit
 EndLocal
 
