@@ -5,9 +5,9 @@
 SetLocal DisableDelayedExpansion
 
 set Result=1
+set Arg1=%1
 
 SetLocal EnableDelayedExpansion
-set Arg1=%1
 if not .!Arg1! == . EndLocal & call :Usage & goto Exit
 EndLocal
 
