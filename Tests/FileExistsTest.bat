@@ -29,10 +29,6 @@ set Desc=Valid drive: C:\
 call "%BatchFile%" C:\
 if %ErrorLevel% neq 1 goto ExitFail
 
-set Desc=Valid file: C:\Windows\system32\explorer.exe
-call "%BatchFile%" C:\Windows\system32\explorer.exe
-if %ErrorLevel% neq 0 goto ExitFail
-
 set Desc=Missing file: C:\Windows\notepad.exeXXXXXX
 call "%BatchFile%" C:\Windows\notepad.exeXXXXXX
 if %ErrorLevel% neq 1 goto ExitFail
