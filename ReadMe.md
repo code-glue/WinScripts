@@ -6,7 +6,7 @@ Various scripts for automating and tweaking Windows I've created over the years.
 ___
 ### AdbSuPull.bat
 Copies files/directories from a rooted Android device to a Windows path.  
-The files are temporarily copied to the directory "/mnt/sdcard" on the device.  
+The files are temporarily copied to the directory "" on the device.  
 The Android device must have enough free space to allow this operation.  
 
 **Usage:**  
@@ -164,6 +164,14 @@ Gets the default editor for text files.
 **Usage:**  
 
     GetTextEditor <No Parameters>  
+
+___
+### KillAdb.bat
+Kills all instances of adb.exe.  
+
+**Usage:**  
+
+    KillAdb <No Parameters>  
 
 ___
 ### PauseGui.bat
