@@ -5,14 +5,21 @@
 SetLocal DisableDelayedExpansion
 
 set Result=1
+
+SetLocal EnableDelayedExpansion
+set Arg1=%1
+set Arg1NoQuotes=%~1
+set Arg3=%3
+if .!Arg1! == . EndLocal & call :Usage & goto Exit
+if !Arg1NoQuotes! == /? EndLocal & call :Usage & goto Exit
+if not .!Arg3! == . EndLocal & call :Usage & goto Exit
+EndLocal
+
+
+:DoWork
 set RemotePath=%~1
 set LocalPath=%~f2
 set SdCardPath=/mnt/sdcard
-
-if [%1] == [] call :Usage & goto Exit
-if "%~1" == "/?" call :Usage & goto Exit
-if not [%3] == [] call :Usage & goto Exit
-
 
 adb shell exit >nul
 if %ErrorLevel% neq 0 goto Exit
@@ -21,7 +28,7 @@ if %ErrorLevel% neq 0 goto Exit
 set RemotePath=%RemotePath: =\ %
 
 :: Get time stamp, replacing spaces with zeros
-set TimeStamp=%date:~-4,4%-%date:~-10,2%-%date:~-7,2%_%time:~-11,2%-%time:~-8,2%-%time:~-5,2%
+set TimeStamp=%date:~-4,4%.%date:~-10,2%.%date:~-7,2%-%time:~-11,2%.%time:~-8,2%.%time:~-5,2%.%time:~-2%
 set TimeStamp=%TimeStamp: =0%
 
 if "%LocalPath%" == "" set LocalPath=adbSuPull_%UserName%_%TimeStamp%

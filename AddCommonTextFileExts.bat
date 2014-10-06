@@ -2,7 +2,7 @@
 
 :: %License%
 
-SetLocal
+SetLocal DisableDelayedExpansion
 
 set Result=1
 
@@ -296,7 +296,13 @@ xul           ^
 yml           ^
 )
 
-if not [%1] == [] call :Usage & goto Exit
+SetLocal EnableDelayedExpansion
+set Arg1=%1
+if not .!Arg1! == . EndLocal & call :Usage & goto Exit
+EndLocal
+
+
+:DoWork
 set Result=0
 echo Adding a plain text persistent handler for the following extensions:
 echo.

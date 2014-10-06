@@ -6,8 +6,14 @@ SetLocal DisableDelayedExpansion
 
 set Result=1
 
-if not [%1] == [] call :Usage & goto Exit
 
+SetLocal EnableDelayedExpansion
+set Arg1=%1
+if not .!Arg1! == . EndLocal & call :Usage & goto Exit
+EndLocal
+
+
+:DoWork
 set IconCachePath=%LocalAppData%\IconCache.db
 if exist "%IconCachePath%" del "%IconCachePath%" /a
 if not exist "%IconCachePath%" set Result=0
