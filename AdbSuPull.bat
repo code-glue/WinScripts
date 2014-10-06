@@ -6,7 +6,7 @@ SetLocal DisableDelayedExpansion
 
 set Result=1
 set Arg1=%1
-set Arg1NoQuotes=%~1
+set "Arg1NoQuotes=%Arg1:"=%"
 set Arg3=%3
 
 SetLocal EnableDelayedExpansion

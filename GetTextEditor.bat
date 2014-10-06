@@ -5,10 +5,16 @@
 SetLocal DisableDelayedExpansion
 
 set Result=1
+set Arg1=%1
+
+SetLocal EnableDelayedExpansion
+if not .!Arg1! == . EndLocal & call :Usage & goto Exit
+EndLocal
+
+
+:DoWork
 set RegKey=HKCR\SystemFileAssociations\text\shell\open\command
 set Count=0
-
-if not [%1] == [] call :Usage & goto Exit
 
 for /f "delims=  " %%a in ('reg query "%RegKey%" /ve') do (
     for %%b in (%%a) do (
@@ -18,6 +24,7 @@ for /f "delims=  " %%a in ('reg query "%RegKey%" /ve') do (
         set /a Count+=1
     )
 )
+
 
 :Expand
 for /f "delims=" %%a in ('echo "%TextEditor%"') do set TextEditor=%%~a

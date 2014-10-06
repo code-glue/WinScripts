@@ -5,11 +5,17 @@
 SetLocal DisableDelayedExpansion
 
 set Result=1
+set Arg1=%1
+set "Arg1NoQuotes=%Arg1:"=%"
+set Arg2=%2
 
-if [%1] == [] goto Confirm
-if "%~1" == "/?" call :Usage & goto Exit
-if not [%2] == [] call :Usage & goto Exit
-if /i "%~1" == "/q" goto Restart
+SetLocal EnableDelayedExpansion
+if .!Arg1! == . EndLocal & goto Confirm
+if /i not !Arg1NoQuotes! == /q EndLocal & call :Usage & goto Exit
+if not .!Arg2! == . EndLocal & call :Usage & goto Exit
+EndLocal
+
+goto Restart
 
 
 :Confirm
