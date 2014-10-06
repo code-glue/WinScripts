@@ -6,24 +6,24 @@
 SetLocal DisableDelayedExpansion
 
 set Result=1
+set Arg1=%1
+set "Arg1NoQuotes=%Arg1:"=%"
+set Arg2=%2
 set RestartExplorer=%~dp0RestartExplorer.bat
 set Restart=0
 set UI=0
 
 
-:InitArgs
 SetLocal EnableDelayedExpansion
-set Arg1=%1
-set Arg2=%2
-if !Arg1! == /? call :Usage & goto Exit
-if not .!Arg2! == . call :Usage & goto Exit
-if .!Arg1! == . EndLocal & (set UI=1) & goto BeginScript
+if .!Arg1! == . EndLocal & (set UI=1) & goto DoWork
+if not .!Arg2! == . EndLocal & call :Usage & goto Exit
+if /i !Arg1NoQuotes! == /n EndLocal & goto DoWork
+if /i !Arg1NoQuotes! == /y EndLocal & (set Restart=1) & goto DoWork
 EndLocal
-if /i "%~1" == "/y" set Restart=1 & goto BeginScript
-if /i not "%~1" == "/n" call :Usage & goto Exit
+call :Usage & goto Exit
 
 
-:BeginScript
+:DoWork
 call :UpdateRegistry
 set Result=%ErrorLevel%
 call :UpdateRegistryResult
