@@ -5,12 +5,26 @@
 SetLocal DisableDelayedExpansion
 
 set Result=1
+set Arg1=%1
+set "Arg1NoQuotes=%Arg1:"=%"
+set Arg2=%2
 
-if [%1] == [] goto Exit
-if "%~1" == "/?" call :Usage & goto Exit
-if not [%2] == [] call :Usage & goto Exit
+SetLocal EnableDelayedExpansion
+if .!Arg1! == . EndLocal & goto Exit
+if !Arg1NoQuotes! == /? EndLocal & call :Usage & goto Exit
+if not .!Arg2! == . EndLocal & call :Usage & goto Exit
+EndLocal
 
-goto TestPath
+
+:TestPath
+set "RegPath=%~1"
+set "RegPath=%RegPath:"=\"%"
+SetLocal EnableDelayedExpansion
+reg query "!RegPath!" >nul 2>&1
+if %ErrorLevel% equ 0 EndLocal & (set Result=0) & goto Exit
+EndLocal
+goto Exit
+
 
 :Usage
 echo.
@@ -39,11 +53,6 @@ echo.
 echo.  C:\^>%~n0 "HKCU\BadKeyName"
 echo.    Sets %%ErrorLevel%% to 1. Registry key does not exist.
 exit /b
-
-
-:TestPath
-reg query "%~1" >nul 2>&1
-if %ErrorLevel% equ 0 set Result=0
 
 
 :Exit

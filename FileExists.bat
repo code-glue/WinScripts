@@ -5,12 +5,23 @@
 SetLocal DisableDelayedExpansion
 
 set Result=1
+set Arg1=%1
+set "Arg1NoQuotes=%Arg1:"=%"
+set Arg2=%2
 
-if [%1] == [] goto Exit
-if "%~1" == "/?" call :Usage & goto Exit
-if not [%2] == [] call :Usage & goto Exit
+SetLocal EnableDelayedExpansion
+if .!Arg1! == . EndLocal & goto Exit
+if !Arg1NoQuotes! == /? EndLocal & call :Usage & goto Exit
+if not .!Arg2! == . EndLocal & call :Usage & goto Exit
+EndLocal
 
-goto TestPath
+
+:TestPath
+set "FilePath=%~f1"
+if "%FilePath:~-1%" == "." set Result=1 & goto Exit
+if exist "%FilePath%" (2>nul pushd "%FilePath%" && (popd) || set Result=0)
+goto Exit
+
 
 :Usage
 echo.
@@ -32,10 +43,6 @@ echo.
 echo.  C:\^>%~n0 "C:\Windows"
 echo.    Sets %%ErrorLevel%% to 1. Path exists but is a directory.
 exit /b
-
-
-:TestPath
-if exist "%~f1" (2>nul pushd "%~f1" && (popd) || set Result=0)
 
 
 :Exit
