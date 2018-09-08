@@ -80,7 +80,7 @@ exit /b
 if %Result% equ 0 (
     echo Shortcut suffix enabled.
 ) else (
-   (echo %~n0: Failed to enabled shortcut suffix.)1>&2
+   (echo %~n0: Failed to enable shortcut suffix.)1>&2
 )
 exit /b
 

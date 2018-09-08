@@ -22,7 +22,7 @@ goto ExitResult
 
 
 :Usage
-echo Clears the icon cache
+echo Clears the icon cache.
 echo.
 echo.%~n0 ^<No Parameters^>
 exit /b

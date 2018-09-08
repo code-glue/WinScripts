@@ -93,6 +93,7 @@ set Desc="HKCR\! WinScripts Test"
 call "%BatchFile%" "HKCR\! WinScripts Test"
 if %ErrorLevel% neq 1 goto ExitFail
 
+:: Add registry values for testing
 regedit /s RegKeyExistsTest1.reg
 
 set Desc="HKCR\! WinScripts Test"
@@ -123,6 +124,7 @@ set Desc="HKCR\! WinScripts Test\""
 call "%BatchFile%" "HKCR\! WinScripts Test\""
 if %ErrorLevel% neq 1 goto ExitFail
 
+:: Add registry values for testing
 regedit /s RegKeyExistsTest2.reg
 
 set Desc="HKCR\! WinScripts Test\["
@@ -161,6 +163,7 @@ echo Test failed: %Desc%
 
 
 :Exit
+:: Remove registry values for testing
 (reg delete "HKCR\! WinScripts Test" /f)>nul 2>&1
 popd
 call "%~dp0..\PauseGui.bat" "%~f0"

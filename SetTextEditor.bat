@@ -82,7 +82,7 @@ exit /b
 
 :Usage
 call :PrintHeader
-echo.%~n0 [ExePath]
+echo.%~n0 ExePath
 echo.
 echo.  ExePath    The path of the program to set as the default text editor.
 echo.

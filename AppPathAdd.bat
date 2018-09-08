@@ -9,10 +9,11 @@ set Result=1
 goto BeginScript
 
 
+REM Loop prompt until input is validated
 :EnterFilePath
 call :PrintHeader
 :EnterFilePathSub
-set /p "FilePath=Enter path to exe file [Ctrl+C to exit]: "
+set /p "FilePath=Enter path to file [Ctrl+C to exit]: "
 SetLocal EnableDelayedExpansion
 if .!FilePath! == . EndLocal & goto EnterFilePathSub
 set "NoSpaces=!FilePath: =!"
@@ -30,6 +31,7 @@ set Arg1=%1
 set "Arg1NoQuotes=%Arg1:"=%"
 set Arg3=%3
 
+REM Validate args
 SetLocal EnableDelayedExpansion
 if .!Arg1! == . EndLocal & goto EnterFilePath
 if !Arg1NoQuotes! == /? EndLocal & call :Usage & goto Exit
@@ -54,7 +56,8 @@ goto ExitResult
 for /f "tokens=*" %%a in ("%FilePath%") do (
     set FilePath=%%~fa
     set FileDir=%%~dpa
-    set FileName=%%~na
+    set FileName=%%~nxa
+    if "%%~xa" == "" set "FileName=%%~na.exe"
 )
 
 call "%~dp0FileExists.bat" "%FilePath%"
@@ -81,7 +84,7 @@ exit /b
 
 
 :UpdateRegistry
-set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%Alias%.exe
+set RegKey=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%Alias%
 
 reg add "%RegKey%" /f /ve /d "%FilePath%" >nul
 if %ErrorLevel% neq 0 exit /b 1
