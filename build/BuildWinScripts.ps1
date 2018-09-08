@@ -39,12 +39,12 @@ begin
     #region Contants
 
     $projectName       = 'WinScripts'
-    $version           = '1.0.1'
+    $version           = '1.0.2'
     $authorName        = 'Benjamin Lemmond'
     $authorEmail       = 'benlemmond@codeglue.org'
     $companyName       = 'Code Glue, LLC'
     $companyUrl        = 'www.code-glue.com'
-    $copyrightYear     = '2014'
+    $copyrightYear     = '2018'
     $indent            = ' ' * 4
 
     #endregion
