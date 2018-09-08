@@ -423,9 +423,9 @@ goto Exit
 SetLocal EnableDelayedExpansion
 echo.
 echo Adds a plain text handler for the following file extensions, allowing files with the extension to be indexed, searched, and easily opened in any text editor:
-echo. 
+echo.
 for %%a in %TextFileExtensions% do (
-    set AllExts=!AllExts!%%a 
+    set AllExts=!AllExts!%%a
 )
 echo !AllExts!
 echo.
