@@ -78,6 +78,10 @@ exit /b 0
 
 
 :UpdateRegistry
+if "%Extension%" == "." (
+    reg add "HKCR\%Extension%" /ve /d "txtfile" /f >nu
+    if %ErrorLevel% neq 0 exit /b 1
+)
 reg add "HKCR\%Extension%" /v "PerceivedType" /d "text" /f >nul
 if %ErrorLevel% neq 0 exit /b 1
 reg add "HKCR\%Extension%\PersistentHandler" /ve /d "{5E941D80-BF96-11CD-B579-08002B30BFEB}" /f > nul
